@@ -1,0 +1,4 @@
+/bin/
+/tareas
+*.test
+*.out
