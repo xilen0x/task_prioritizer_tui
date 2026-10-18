@@ -351,5 +351,3 @@ func viewHelp() []string {
 	}
 	return box(spec, body)
 }
-
-func (m Model) onMouse(tea.MouseMsg) (tea.Model, tea.Cmd) { return m, nil }

@@ -80,7 +80,7 @@ func run(o options) error {
 		Bar:         bar,
 		PlainDigits: o.plainDigits,
 	})
-	_, err = tea.NewProgram(m, tea.WithAltScreen()).Run()
+	_, err = tea.NewProgram(m, tea.WithAltScreen(), tea.WithMouseCellMotion()).Run()
 	return err
 }
 

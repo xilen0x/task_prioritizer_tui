@@ -26,9 +26,6 @@ const (
 	marginX    = 1
 	sideWidth  = 30
 	colGap     = 2
-	focusH     = 16
-	sideBarH   = 13
-	progressH  = sideBarH + 6
 	focusBarW  = 62
 	rowBarW    = 18
 	chromeRows = 5 // header, gap, gap, hint, fkeys
@@ -45,18 +42,22 @@ func (m Model) View() string {
 
 // screen renders the main screen as exactly m.height lines of m.width.
 func (m Model) screen() []string {
-	w, h := m.width, m.height
-	cw := w - 2*marginX
-	leftW := cw - sideWidth - colGap
-	mainH := h - chromeRows
+	l := m.layout()
+	if l.tooSmall {
+		return m.viewTooSmall()
+	}
+	if l.compact {
+		m.plainDigits = true // the big font needs the full design size
+	}
+	cw, mainH := l.cw, l.mainH
 
 	var out []string
 	out = append(out, m.viewHeader(cw))
 	out = append(out, blank(cw, theme.Ink1))
-	main := hjoin(m.viewLeft(leftW, mainH), column(mainH, colGap), m.viewSide(sideWidth, mainH))
+	main := hjoin(m.viewLeft(l), column(mainH, colGap), m.viewSide(l))
 	out = append(out, main...)
 	out = append(out, blank(cw, theme.Ink1))
-	out = append(out, m.viewHint(cw), m.viewFKeys(cw))
+	out = append(out, m.viewHint(cw), m.viewFKeys(cw, l.compact))
 	for i := range out {
 		out[i] = blank(marginX, theme.Ink1) + fit(out[i], cw, theme.Ink1) + blank(marginX, theme.Ink1)
 	}
@@ -74,19 +75,20 @@ func (m Model) viewHeader(w int) string {
 	return fit(left, w-lenW(right), bg) + right
 }
 
-func (m Model) viewLeft(w, h int) []string {
-	out := m.viewFocus(w)
+func (m Model) viewLeft(l layout) []string {
+	w, h := l.leftW, l.mainH
+	out := m.viewFocus(w, l.focusH)
 	if len(m.board.Tasks) > 0 {
-		rowsH := h - len(out)
-		rowH := max(4, rowsH/3-1)
 		others := m.others()
 		for i := 0; i < 3; i++ {
-			out = append(out, blank(w, theme.Ink1))
+			if l.rowGap > 0 {
+				out = append(out, blank(w, theme.Ink1))
+			}
 			if i < len(others) {
-				out = append(out, m.viewRow(others[i], w, rowH)...)
+				out = append(out, m.viewRow(others[i], w, l.rowH)...)
 			} else {
 				num := len(m.board.Tasks) + 1 + (i - len(others))
-				out = append(out, viewEmptyRow(num, w, rowH)...)
+				out = append(out, viewEmptyRow(num, w, l.rowH)...)
 			}
 		}
 	}
@@ -119,7 +121,7 @@ func (m Model) digits(s, fg string) []string {
 	return out
 }
 
-func (m Model) viewFocus(w int) []string {
+func (m Model) viewFocus(w, focusH int) []string {
 	bg := theme.Ink1
 	f, ok := m.board.Focused()
 	num := "—"
@@ -256,7 +258,8 @@ func rowBody(content []string, n, w int, bg string) []string {
 	return out
 }
 
-func (m Model) viewSide(w, h int) []string {
+func (m Model) viewSide(l layout) []string {
+	w, h, barH := sideWidth, l.mainH, l.barH
 	bg := theme.Ink1
 	spec := boxSpec{width: w, title: "PROGRESO", titleFg: theme.OnDark2, border: theme.OnDarkBorder, bg: bg}
 	inner := w - 2
@@ -276,7 +279,7 @@ func (m Model) viewSide(w, h int) []string {
 				numFg = theme.Accent
 			}
 		}
-		fill, empty := theme.Column(m.bar, t.Progress, sideBarH)
+		fill, empty := theme.Column(m.bar, t.Progress, barH)
 		for _, e := range empty {
 			bars[i] = append(bars[i], center(paint(e, theme.Ink2, bg), cellW, bg))
 		}
@@ -286,7 +289,7 @@ func (m Model) viewSide(w, h int) []string {
 		nums += center(bold(strconv.Itoa(i+1), numFg, bg), cellW, bg)
 		pcts += center(paint(pct, theme.OnDark3, bg), cellW, bg)
 	}
-	for r := 0; r < sideBarH; r++ {
+	for r := 0; r < barH; r++ {
 		body = append(body, bars[0][r]+bars[1][r]+bars[2][r]+bars[3][r])
 	}
 	body = append(body, blank(inner, bg), nums, pcts)
@@ -319,11 +322,18 @@ func (m Model) viewHint(w int) string {
 	}
 	hints := [][2]string{{"↑↓", "mover"}, {"Enter", "enfocar"}, {"e", "editar"}, {"espacio", "cambiar estado"},
 		{"+ −", "progreso"}, {"x", "borrar"}, {"p", "pomodoro"}, {"a", "acerca de"}}
-	var parts []string
-	for _, h := range hints {
-		parts = append(parts, paint(h[0], theme.OnDark1, bg)+paint(" "+h[1], theme.OnDark3, bg))
+	line := ""
+	for i, h := range hints {
+		part := paint(h[0], theme.OnDark1, bg) + paint(" "+h[1], theme.OnDark3, bg)
+		if i > 0 {
+			part = blank(3, bg) + part
+		}
+		if lenW(line)+lenW(part) > w { // drop whole hints that do not fit
+			break
+		}
+		line += part
 	}
-	return fit(strings.Join(parts, blank(3, bg)), w, bg)
+	return fit(line, w, bg)
 }
 
 // fkey is one entry of the function-key bar.
@@ -344,17 +354,27 @@ func (m Model) fkeys() []fkey {
 // disabledBg is Ink2 at 50% over Ink1 (the design dims disabled keys).
 const disabledBg = "#293848"
 
-func (m Model) viewFKeys(w int) string {
+// fkeySegments renders each function key; compact drops the padding so
+// the bar fits a 100-column terminal. The widths drive mouse hit-testing.
+func (m Model) fkeySegments(compact bool) []string {
 	bg := theme.Ink1
-	var b strings.Builder
+	var out []string
 	for _, f := range m.fkeys() {
 		keyFg, labFg, labBg := theme.OnDark1, theme.OnDark2, theme.Ink2
 		if f.disabled {
 			keyFg, labFg, labBg = theme.OnDark4, theme.OnDark4, disabledBg
 		}
-		b.WriteString(bold(" "+f.key, keyFg, bg) + blank(1, bg) + paint(" "+f.label+"   ", labFg, labBg))
+		if compact {
+			out = append(out, bold(f.key, keyFg, bg)+paint(" "+f.label+" ", labFg, labBg)+blank(1, bg))
+		} else {
+			out = append(out, bold(" "+f.key, keyFg, bg)+blank(1, bg)+paint(" "+f.label+"   ", labFg, labBg))
+		}
 	}
-	return fit(b.String(), w, bg)
+	return out
+}
+
+func (m Model) viewFKeys(w int, compact bool) string {
+	return fit(strings.Join(m.fkeySegments(compact), ""), w, theme.Ink1)
 }
 
 // lenW is the display width of a styled string.
