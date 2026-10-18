@@ -21,8 +21,8 @@ The design exists only as a browser mock-up; the user wants a working terminal t
 `ask-on-risk`. Forecast > 400 authored lines; feature is local-only (no remote yet), so PR slicing is deferred until the user adds a remote.
 
 ## Tasks
-- [ ] T1 Scaffold: go mod, deps (bubbletea, lipgloss, bubbles), main.go, Makefile, README — route: delegated (multi-file)
-- [ ] T2 Domain `tasks` with table tests (TDD) — route: delegated
+- [x] T1 Scaffold: go mod, deps (bubbletea, lipgloss, bubbles), main.go, Makefile, README — route: delegated (multi-file)
+- [x] T2 Domain `tasks` with table tests (TDD) — route: delegated
 - [ ] T3 Domain `pomodoro` with tests (TDD) — route: delegated
 - [ ] T4 Storage JSON adapter + round-trip tests — route: delegated
 - [ ] T5 Theme + big-digit font + bar golden tests — route: delegated
@@ -38,5 +38,8 @@ The design exists only as a browser mock-up; the user wants a working terminal t
 ## Progress / Evidence
 (updated per task with commit hash and check output)
 
+- T1 `5d8e498` chore: scaffold. gofmt clean, go vet ok, go build ok, `--bar=x` exits 2 with message.
+- T2 (commit below T1 in `git log`) feat(tasks): domain. RED: tests failed to compile (undefined Task/Demo/New); GREEN: `go test ./internal/tasks` ok; vet/gofmt clean.
+
 ## Next step
-T1.
+T3.
