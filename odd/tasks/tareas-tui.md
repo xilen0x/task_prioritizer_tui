@@ -24,7 +24,7 @@ The design exists only as a browser mock-up; the user wants a working terminal t
 - [x] T1 Scaffold: go mod, deps (bubbletea, lipgloss, bubbles), main.go, Makefile, README — route: delegated (multi-file)
 - [x] T2 Domain `tasks` with table tests (TDD) — route: delegated
 - [x] T3 Domain `pomodoro` with tests (TDD) — route: delegated
-- [ ] T4 Storage JSON adapter + round-trip tests — route: delegated
+- [x] T4 Storage JSON adapter + round-trip tests — route: delegated
 - [ ] T5 Theme + big-digit font + bar golden tests — route: delegated
 - [ ] T6 TUI main screen + teatest golden at 132×42 — route: delegated
 - [ ] T7 Overlays (modal/confirm/help/about) + key map tests — route: delegated
@@ -40,7 +40,8 @@ The design exists only as a browser mock-up; the user wants a working terminal t
 
 - T1 `5d8e498` chore: scaffold. gofmt clean, go vet ok, go build ok, `--bar=x` exits 2 with message.
 - T2 `e967028` feat(tasks): domain. RED: tests failed to compile (undefined Task/Demo/New); GREEN: `go test ./internal/tasks` ok; vet/gofmt clean.
-- T3 feat(pomodoro): pure timer. RED: undefined New/Timer; GREEN: `go test ./internal/pomodoro` ok (phase transitions, long break every 4, full 1500-tick block).
+- T3 `607da86` feat(pomodoro): pure timer. RED: undefined New/Timer; GREEN: `go test ./internal/pomodoro` ok (phase transitions, long break every 4, full 1500-tick block).
+- T4 feat(storage): JSON adapter. RED: undefined New/State; GREEN: round-trip, missing, corrupt, repair, XDG/HOME fallback tests ok with t.TempDir.
 
 ## Next step
-T4.
+T5.
