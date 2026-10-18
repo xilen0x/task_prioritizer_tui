@@ -23,7 +23,7 @@ The design exists only as a browser mock-up; the user wants a working terminal t
 ## Tasks
 - [x] T1 Scaffold: go mod, deps (bubbletea, lipgloss, bubbles), main.go, Makefile, README — route: delegated (multi-file)
 - [x] T2 Domain `tasks` with table tests (TDD) — route: delegated
-- [ ] T3 Domain `pomodoro` with tests (TDD) — route: delegated
+- [x] T3 Domain `pomodoro` with tests (TDD) — route: delegated
 - [ ] T4 Storage JSON adapter + round-trip tests — route: delegated
 - [ ] T5 Theme + big-digit font + bar golden tests — route: delegated
 - [ ] T6 TUI main screen + teatest golden at 132×42 — route: delegated
@@ -39,7 +39,8 @@ The design exists only as a browser mock-up; the user wants a working terminal t
 (updated per task with commit hash and check output)
 
 - T1 `5d8e498` chore: scaffold. gofmt clean, go vet ok, go build ok, `--bar=x` exits 2 with message.
-- T2 (commit below T1 in `git log`) feat(tasks): domain. RED: tests failed to compile (undefined Task/Demo/New); GREEN: `go test ./internal/tasks` ok; vet/gofmt clean.
+- T2 `e967028` feat(tasks): domain. RED: tests failed to compile (undefined Task/Demo/New); GREEN: `go test ./internal/tasks` ok; vet/gofmt clean.
+- T3 feat(pomodoro): pure timer. RED: undefined New/Timer; GREEN: `go test ./internal/pomodoro` ok (phase transitions, long break every 4, full 1500-tick block).
 
 ## Next step
-T3.
+T4.
