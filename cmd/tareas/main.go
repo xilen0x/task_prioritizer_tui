@@ -9,6 +9,12 @@ import (
 	"os"
 
 	tea "github.com/charmbracelet/bubbletea"
+
+	"github.com/xilenox/tareas/internal/pomodoro"
+	"github.com/xilenox/tareas/internal/storage/jsonfile"
+	"github.com/xilenox/tareas/internal/tasks"
+	"github.com/xilenox/tareas/internal/tui"
+	"github.com/xilenox/tareas/internal/tui/theme"
 )
 
 // options holds the parsed command-line flags.
@@ -35,28 +41,58 @@ func parseFlags(args []string) (options, error) {
 	return o, nil
 }
 
-// placeholder is a minimal model used until the real UI is wired in.
-type placeholder struct{}
-
-func (placeholder) Init() tea.Cmd { return nil }
-
-func (p placeholder) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	if k, ok := msg.(tea.KeyMsg); ok && (k.Type == tea.KeyF10 || k.Type == tea.KeyCtrlC) {
-		return p, tea.Quit
+// initialState loads the saved state, or seeds a new one (the design's
+// sample board with --demo, otherwise an empty board).
+func initialState(store *jsonfile.Store, demo bool) (jsonfile.State, error) {
+	st, found, err := store.Load()
+	if err != nil {
+		return st, err
 	}
-	return p, nil
+	if found {
+		return st, nil
+	}
+	if demo {
+		return jsonfile.State{
+			Board: tasks.Demo(),
+			Pomo:  pomodoro.Timer{Phase: pomodoro.Trabajo, Left: pomodoro.WorkSeconds - 437, Running: true, Done: 2},
+		}, nil
+	}
+	return jsonfile.State{Board: tasks.New(), Pomo: pomodoro.New()}, nil
 }
 
-func (placeholder) View() string { return "tareas — F10 para salir\n" }
+func run(o options) error {
+	path, err := jsonfile.DefaultPath()
+	if err != nil {
+		return err
+	}
+	store := jsonfile.New(path)
+	st, err := initialState(store, o.demo)
+	if err != nil {
+		return err
+	}
+	bar, _ := theme.ParseBarStyle(o.bar)
+	m := tui.New(tui.Options{
+		Board: st.Board,
+		Pomo:  st.Pomo,
+		Save: func(b tasks.Board, p pomodoro.Timer) error {
+			return store.Save(jsonfile.State{Board: b, Pomo: p})
+		},
+		Bar:         bar,
+		PlainDigits: o.plainDigits,
+	})
+	_, err = tea.NewProgram(m, tea.WithAltScreen()).Run()
+	return err
+}
 
 func main() {
-	if _, err := parseFlags(os.Args[1:]); err != nil {
+	o, err := parseFlags(os.Args[1:])
+	if err != nil {
 		if !errors.Is(err, flag.ErrHelp) {
 			fmt.Fprintln(os.Stderr, "tareas:", err)
 		}
 		os.Exit(2)
 	}
-	if _, err := tea.NewProgram(placeholder{}, tea.WithAltScreen()).Run(); err != nil {
+	if err := run(o); err != nil {
 		fmt.Fprintln(os.Stderr, "tareas:", err)
 		os.Exit(1)
 	}

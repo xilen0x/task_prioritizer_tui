@@ -1,0 +1,361 @@
+package tui
+
+import (
+	"fmt"
+	"strconv"
+	"strings"
+
+	"github.com/charmbracelet/lipgloss"
+
+	"github.com/xilenox/tareas/internal/pomodoro"
+	"github.com/xilenox/tareas/internal/tasks"
+	"github.com/xilenox/tareas/internal/tui/theme"
+)
+
+// Spanish UI copy shared by several views.
+var (
+	statusLabel = map[tasks.Status]string{tasks.Pendiente: "PENDIENTE", tasks.Curso: "EN CURSO", tasks.Hecha: "HECHA"}
+	statusColor = map[tasks.Status]string{tasks.Pendiente: theme.OnDark3, tasks.Curso: theme.Curso, tasks.Hecha: theme.Success}
+	prioLabel   = map[int]string{1: "P1 alta", 2: "P2 media", 3: "P3 baja"}
+	dias        = []string{"dom", "lun", "mar", "mié", "jue", "vie", "sáb"}
+	meses       = []string{"ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"}
+)
+
+// Layout constants for the design size.
+const (
+	marginX    = 1
+	sideWidth  = 30
+	colGap     = 2
+	focusH     = 16
+	sideBarH   = 13
+	progressH  = sideBarH + 6
+	focusBarW  = 62
+	rowBarW    = 18
+	chromeRows = 5 // header, gap, gap, hint, fkeys
+)
+
+func pctText(p int) string { return strconv.Itoa(p) + "%" }
+
+// View renders the whole screen.
+func (m Model) View() string {
+	lines := m.screen()
+	lines = m.overlay(lines)
+	return strings.Join(lines, "\n")
+}
+
+// screen renders the main screen as exactly m.height lines of m.width.
+func (m Model) screen() []string {
+	w, h := m.width, m.height
+	cw := w - 2*marginX
+	leftW := cw - sideWidth - colGap
+	mainH := h - chromeRows
+
+	var out []string
+	out = append(out, m.viewHeader(cw))
+	out = append(out, blank(cw, theme.Ink1))
+	main := hjoin(m.viewLeft(leftW, mainH), column(mainH, colGap), m.viewSide(sideWidth, mainH))
+	out = append(out, main...)
+	out = append(out, blank(cw, theme.Ink1))
+	out = append(out, m.viewHint(cw), m.viewFKeys(cw))
+	for i := range out {
+		out[i] = blank(marginX, theme.Ink1) + fit(out[i], cw, theme.Ink1) + blank(marginX, theme.Ink1)
+	}
+	return out
+}
+
+func (m Model) viewHeader(w int) string {
+	bg := theme.Ink1
+	left := st(theme.White, theme.Accent).Bold(true).Render(" TAREAS ") +
+		blank(2, bg) + paint(fmt.Sprintf("%d/%d tareas", len(m.board.Tasks), tasks.MaxTasks), theme.OnDark2, bg) +
+		paint("  ·  ", theme.OnDark4, bg) + paint("máximo 4 en pantalla", theme.OnDark3, bg)
+	n := m.now
+	right := paint(fmt.Sprintf("%s %d %s", dias[n.Weekday()], n.Day(), meses[n.Month()-1]), theme.OnDark3, bg) +
+		blank(2, bg) + bold(n.Format("15:04:05"), theme.OnDark1, bg)
+	return fit(left, w-lenW(right), bg) + right
+}
+
+func (m Model) viewLeft(w, h int) []string {
+	out := m.viewFocus(w)
+	if len(m.board.Tasks) > 0 {
+		rowsH := h - len(out)
+		rowH := max(4, rowsH/3-1)
+		others := m.others()
+		for i := 0; i < 3; i++ {
+			out = append(out, blank(w, theme.Ink1))
+			if i < len(others) {
+				out = append(out, m.viewRow(others[i], w, rowH)...)
+			} else {
+				num := len(m.board.Tasks) + 1 + (i - len(others))
+				out = append(out, viewEmptyRow(num, w, rowH)...)
+			}
+		}
+	}
+	for len(out) < h {
+		out = append(out, blank(w, theme.Ink1))
+	}
+	return out[:h]
+}
+
+// others are the non-focused tasks in display order.
+func (m Model) others() []tasks.Task {
+	var out []tasks.Task
+	for _, t := range m.board.Order() {
+		if t.ID != m.board.FocusID {
+			out = append(out, t)
+		}
+	}
+	return out
+}
+
+// digits renders s with the big font, or as one plain bold line.
+func (m Model) digits(s, fg string) []string {
+	if m.plainDigits {
+		return []string{bold(s, fg, theme.Ink1)}
+	}
+	var out []string
+	for _, r := range theme.Big(s) {
+		out = append(out, paint(r, fg, theme.Ink1))
+	}
+	return out
+}
+
+func (m Model) viewFocus(w int) []string {
+	bg := theme.Ink1
+	f, ok := m.board.Focused()
+	num := "—"
+	border := theme.OnDarkBorder
+	if ok {
+		num = strconv.Itoa(m.board.Num(f.ID))
+		if f.ID == m.board.SelID {
+			border = theme.Accent
+		}
+	}
+	spec := boxSpec{width: w, title: "▶ FOCO · TAREA " + num, titleFg: theme.Accent, border: border, bg: bg, padX: 2}
+	inner := w - 2 - 2*spec.padX
+	body := focusH - 2
+	if !ok {
+		lines := make([]string, body)
+		for i := range lines {
+			lines[i] = blank(inner, bg)
+		}
+		lines[body/2-1] = center(bold("Sin tareas", theme.OnDark1, bg), inner, bg)
+		lines[body/2+1] = center(paint("Pulsa ", theme.OnDark3, bg)+bold("F2", theme.Accent, bg)+
+			paint(" o ", theme.OnDark3, bg)+bold("n", theme.Accent, bg)+
+			paint(" para crear la primera.", theme.OnDark3, bg), inner, bg)
+		return box(spec, lines)
+	}
+
+	color := string(theme.PctColor(f.Progress))
+	var lines []string
+	lines = append(lines, st(theme.Ink1, color).Bold(true).Render(" "+statusLabel[f.Status]+" ")+
+		blank(2, bg)+paint(prioLabel[f.Prio], theme.OnDark2, bg)+paint("  ·  ", theme.OnDark4, bg)+
+		paint("estimado "+theme.HoursLabel(f.Est), theme.OnDark3, bg))
+	lines = append(lines, blank(inner, bg))
+	title := wrapLines(f.Title, inner, 2)
+	for i := 0; i < 2; i++ {
+		s := ""
+		if i < len(title) {
+			s = bold(title[i], theme.OnDark1, bg)
+		}
+		lines = append(lines, s)
+	}
+	lines = append(lines, blank(inner, bg))
+	lines = append(lines, m.viewCounters(f, color, inner)...)
+	lines = append(lines, blank(inner, bg))
+	fill, empty := theme.Bar(m.bar, f.Progress, min(focusBarW, inner-18))
+	lines = append(lines, paint(fill, color, bg)+paint(empty, theme.Ink2, bg)+blank(2, bg)+paint("+/− ajusta 10%", theme.OnDark3, bg))
+	for len(lines) < body {
+		lines = append(lines, "")
+	}
+	return box(spec, lines[:body])
+}
+
+// viewCounters is the PROGRESO / POMODORO pair inside the focus box.
+func (m Model) viewCounters(f tasks.Task, color string, w int) []string {
+	bg := theme.Ink1
+	p := m.pomo
+	pomoFg, phase, run := theme.OnDark1, "TRABAJO", "corriendo"
+	if p.Phase == pomodoro.Descanso {
+		pomoFg, phase = theme.Success, "DESCANSO"
+	}
+	if !p.Running {
+		run = "en pausa"
+	}
+	cyc := p.CycleDone()
+
+	right := []string{paint("POMODORO · ", theme.OnDark3, bg) + bold(phase, pomoFg, bg) + paint(" · "+run, theme.OnDark3, bg)}
+	right = append(right, m.digits(p.MMSS(), pomoFg)...)
+	right = append(right, paint(strings.Repeat("●", cyc)+strings.Repeat("○", 4-cyc), pomoFg, bg)+blank(2, bg)+
+		paint("p", theme.OnDark1, bg)+paint(" pausa · ", theme.OnDark3, bg)+paint("r", theme.OnDark1, bg)+paint(" reiniciar", theme.OnDark3, bg))
+
+	left := []string{paint("PROGRESO", theme.OnDark3, bg)}
+	left = append(left, m.digits(pctText(f.Progress), color)...)
+	for len(left) < len(right) { // bottom-align like the design
+		left = append([]string{""}, left...)
+	}
+
+	rw := 0
+	for _, r := range right {
+		rw = max(rw, lenW(r))
+	}
+	sep := paint("│", theme.OnDarkBorder, bg) + blank(3, bg)
+	rightW := rw + lenW(sep)
+	out := make([]string, len(right))
+	for i := range right {
+		out[i] = fit(left[i], w-rightW, bg) + sep + fit(right[i], rw, bg)
+	}
+	return out
+}
+
+func (m Model) viewRow(t tasks.Task, w, h int) []string {
+	selected := t.ID == m.board.SelID
+	bg, border, numFg := theme.Ink1, theme.OnDarkRule, theme.OnDark3
+	if selected {
+		bg, border, numFg = theme.Ink2, theme.Accent, theme.Accent
+	}
+	spec := boxSpec{width: w, border: border, bg: bg, padX: 2}
+	inner := w - 2 - 2*spec.padX
+	color := string(theme.PctColor(t.Progress))
+	numW, rightW := 4, rowBarW+2+5
+	titleW := inner - numW - rightW - 1
+
+	titleStyle := st(theme.OnDark1, bg).Bold(true)
+	if t.Status == tasks.Hecha {
+		titleStyle = titleStyle.Strikethrough(true)
+	}
+	fill, empty := theme.Bar(m.bar, t.Progress, rowBarW)
+	lineA := fit(bold(strconv.Itoa(m.board.Num(t.ID)), numFg, bg), numW, bg) +
+		fit(titleStyle.Render(ellipsis(t.Title, titleW)), titleW, bg) + blank(1, bg) +
+		paint(fill, color, bg) + paint(empty, theme.Ink2, bg) + blank(2, bg) +
+		fitRight(bold(pctText(t.Progress), color, bg), 5, bg)
+	lineB := blank(numW, bg) + bold(statusLabel[t.Status], color, bg) +
+		paint(" · ", theme.OnDark4, bg) + paint(prioLabel[t.Prio], theme.OnDark3, bg) +
+		paint(" · ", theme.OnDark4, bg) + paint(theme.HMS(t.Elapsed)+" de "+theme.HoursLabel(t.Est), theme.OnDark3, bg)
+	return box(spec, rowBody([]string{lineA, lineB}, h-2, inner, bg))
+}
+
+func viewEmptyRow(num, w, h int) []string {
+	bg := theme.Ink1
+	spec := boxSpec{width: w, border: theme.OnDarkRule, dashed: true, bg: bg, padX: 2}
+	inner := w - 2 - 2*spec.padX
+	line := fit(bold(strconv.Itoa(num), theme.Ink2, bg), 4, bg) + paint("espacio libre · ", theme.OnDark4, bg) +
+		paint("F2", theme.Accent, bg) + paint(" nueva tarea", theme.OnDark4, bg)
+	return box(spec, rowBody([]string{line, ""}, h-2, inner, bg))
+}
+
+// rowBody centres content vertically in n lines.
+func rowBody(content []string, n, w int, bg string) []string {
+	out := make([]string, n)
+	top := max(0, (n-len(content))/2)
+	for i := range out {
+		out[i] = blank(w, bg)
+		if j := i - top; j >= 0 && j < len(content) {
+			out[i] = fit(content[j], w, bg)
+		}
+	}
+	return out
+}
+
+func (m Model) viewSide(w, h int) []string {
+	bg := theme.Ink1
+	spec := boxSpec{width: w, title: "PROGRESO", titleFg: theme.OnDark2, border: theme.OnDarkBorder, bg: bg}
+	inner := w - 2
+	cellW := inner / 4
+	body := []string{blank(inner, bg)}
+	bars := make([][]string, 4)
+	nums := ""
+	pcts := ""
+	for i := 0; i < 4; i++ {
+		var t tasks.Task
+		has := i < len(m.board.Tasks)
+		color, numFg, pct := theme.Ink2, theme.Ink2, "—"
+		if has {
+			t = m.board.Tasks[i]
+			color, numFg, pct = string(theme.PctColor(t.Progress)), theme.OnDark1, pctText(t.Progress)
+			if t.ID == m.board.SelID {
+				numFg = theme.Accent
+			}
+		}
+		fill, empty := theme.Column(m.bar, t.Progress, sideBarH)
+		for _, e := range empty {
+			bars[i] = append(bars[i], center(paint(e, theme.Ink2, bg), cellW, bg))
+		}
+		for _, f := range fill {
+			bars[i] = append(bars[i], center(paint(f, color, bg), cellW, bg))
+		}
+		nums += center(bold(strconv.Itoa(i+1), numFg, bg), cellW, bg)
+		pcts += center(paint(pct, theme.OnDark3, bg), cellW, bg)
+	}
+	for r := 0; r < sideBarH; r++ {
+		body = append(body, bars[0][r]+bars[1][r]+bars[2][r]+bars[3][r])
+	}
+	body = append(body, blank(inner, bg), nums, pcts)
+	out := box(spec, body)
+
+	out = append(out, blank(w, bg))
+	s := m.board.Stats()
+	items := []struct{ label, value, color string }{
+		{"EN CURSO", strconv.Itoa(s.Curso), theme.Curso},
+		{"PENDIENTES", strconv.Itoa(s.Pendiente), theme.OnDark2},
+		{"HECHAS", strconv.Itoa(s.Hecha), theme.Success},
+		{"TIEMPO TOTAL", theme.TotalLabel(s.Elapsed), theme.OnDark1},
+	}
+	sumSpec := boxSpec{width: w, title: "RESUMEN", titleFg: theme.OnDark2, border: theme.OnDarkBorder, bg: bg, padX: 2}
+	sumInner := w - 2 - 2*sumSpec.padX
+	var rows []string
+	for _, it := range items {
+		v := bold(it.value, it.color, bg)
+		rows = append(rows, fit(paint(it.label, theme.OnDark3, bg), sumInner-lenW(v), bg)+v)
+	}
+	sumH := h - len(out)
+	out = append(out, box(sumSpec, spaceAround(rows, max(len(rows), sumH-2), sumInner, bg))...)
+	return out[:min(len(out), h)]
+}
+
+func (m Model) viewHint(w int) string {
+	bg := theme.Ink1
+	if m.saveErr != nil {
+		return fit(bold("No se pudo guardar: "+m.saveErr.Error(), theme.Accent, bg), w, bg)
+	}
+	hints := [][2]string{{"↑↓", "mover"}, {"Enter", "enfocar"}, {"e", "editar"}, {"espacio", "cambiar estado"},
+		{"+ −", "progreso"}, {"x", "borrar"}, {"p", "pomodoro"}, {"a", "acerca de"}}
+	var parts []string
+	for _, h := range hints {
+		parts = append(parts, paint(h[0], theme.OnDark1, bg)+paint(" "+h[1], theme.OnDark3, bg))
+	}
+	return fit(strings.Join(parts, blank(3, bg)), w, bg)
+}
+
+// fkey is one entry of the function-key bar.
+type fkey struct {
+	key, label string
+	disabled   bool
+}
+
+func (m Model) fkeys() []fkey {
+	empty := len(m.board.Tasks) == 0
+	return []fkey{
+		{"F1", "Ayuda", false}, {"F2", "Nueva", m.board.Full()}, {"F3", "Editar", empty},
+		{"F4", "Estado", empty}, {"F5", "Foco", empty}, {"F8", "Borrar", empty},
+		{"F6", "Pomodoro", false}, {"F9", "Acerca", false}, {"F10", "Salir", false},
+	}
+}
+
+// disabledBg is Ink2 at 50% over Ink1 (the design dims disabled keys).
+const disabledBg = "#293848"
+
+func (m Model) viewFKeys(w int) string {
+	bg := theme.Ink1
+	var b strings.Builder
+	for _, f := range m.fkeys() {
+		keyFg, labFg, labBg := theme.OnDark1, theme.OnDark2, theme.Ink2
+		if f.disabled {
+			keyFg, labFg, labBg = theme.OnDark4, theme.OnDark4, disabledBg
+		}
+		b.WriteString(bold(" "+f.key, keyFg, bg) + blank(1, bg) + paint(" "+f.label+"   ", labFg, labBg))
+	}
+	return fit(b.String(), w, bg)
+}
+
+// lenW is the display width of a styled string.
+func lenW(s string) int { return lipgloss.Width(s) }
