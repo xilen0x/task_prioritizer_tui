@@ -26,7 +26,7 @@ func Demo() Board {
 	}
 }
 
-func (b *Board) index(id int) int {
+func (b Board) index(id int) int {
 	for i, t := range b.Tasks {
 		if t.ID == id {
 			return i
@@ -36,7 +36,7 @@ func (b *Board) index(id int) int {
 }
 
 // Get returns the task with id, or the zero Task when absent.
-func (b *Board) Get(id int) Task {
+func (b Board) Get(id int) Task {
 	if i := b.index(id); i >= 0 {
 		return b.Tasks[i]
 	}
@@ -44,10 +44,10 @@ func (b *Board) Get(id int) Task {
 }
 
 // Has reports whether a task with id exists.
-func (b *Board) Has(id int) bool { return b.index(id) >= 0 }
+func (b Board) Has(id int) bool { return b.index(id) >= 0 }
 
 // Focused returns the task in focus.
-func (b *Board) Focused() (Task, bool) {
+func (b Board) Focused() (Task, bool) {
 	i := b.index(b.FocusID)
 	if i < 0 {
 		return Task{}, false
@@ -56,7 +56,7 @@ func (b *Board) Focused() (Task, bool) {
 }
 
 // Selected returns the selected task.
-func (b *Board) Selected() (Task, bool) {
+func (b Board) Selected() (Task, bool) {
 	i := b.index(b.SelID)
 	if i < 0 {
 		return Task{}, false
@@ -65,17 +65,17 @@ func (b *Board) Selected() (Task, bool) {
 }
 
 // Num is the 1-based slot number of a task (its creation position), or 0.
-func (b *Board) Num(id int) int { return b.index(id) + 1 }
+func (b Board) Num(id int) int { return b.index(id) + 1 }
 
 // Full reports whether the board holds MaxTasks tasks.
-func (b *Board) Full() bool { return len(b.Tasks) >= MaxTasks }
+func (b Board) Full() bool { return len(b.Tasks) >= MaxTasks }
 
 // CanAdd reports whether another task fits.
-func (b *Board) CanAdd() bool { return !b.Full() }
+func (b Board) CanAdd() bool { return !b.Full() }
 
 // Order is the display order: the focused task first, then the rest in
 // slot order.
-func (b *Board) Order() []Task {
+func (b Board) Order() []Task {
 	f, ok := b.Focused()
 	if !ok {
 		return append([]Task(nil), b.Tasks...)
@@ -194,7 +194,7 @@ type Stats struct {
 }
 
 // Stats counts tasks per status and totals tracked seconds.
-func (b *Board) Stats() Stats {
+func (b Board) Stats() Stats {
 	var s Stats
 	for _, t := range b.Tasks {
 		switch t.Status {
