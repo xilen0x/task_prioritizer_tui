@@ -25,7 +25,7 @@ The design exists only as a browser mock-up; the user wants a working terminal t
 - [x] T2 Domain `tasks` with table tests (TDD) — route: delegated
 - [x] T3 Domain `pomodoro` with tests (TDD) — route: delegated
 - [x] T4 Storage JSON adapter + round-trip tests — route: delegated
-- [ ] T5 Theme + big-digit font + bar golden tests — route: delegated
+- [x] T5 Theme + big-digit font + bar golden tests — route: delegated
 - [ ] T6 TUI main screen + teatest golden at 132×42 — route: delegated
 - [ ] T7 Overlays (modal/confirm/help/about) + key map tests — route: delegated
 - [ ] T8 Resize degradation + best-effort mouse — route: delegated
@@ -41,7 +41,8 @@ The design exists only as a browser mock-up; the user wants a working terminal t
 - T1 `5d8e498` chore: scaffold. gofmt clean, go vet ok, go build ok, `--bar=x` exits 2 with message.
 - T2 `e967028` feat(tasks): domain. RED: tests failed to compile (undefined Task/Demo/New); GREEN: `go test ./internal/tasks` ok; vet/gofmt clean.
 - T3 `607da86` feat(pomodoro): pure timer. RED: undefined New/Timer; GREEN: `go test ./internal/pomodoro` ok (phase transitions, long break every 4, full 1500-tick block).
-- T4 feat(storage): JSON adapter. RED: undefined New/State; GREEN: round-trip, missing, corrupt, repair, XDG/HOME fallback tests ok with t.TempDir.
+- T4 `47fc3ba` feat(storage): JSON adapter. RED: undefined New/State; GREEN: round-trip, missing, corrupt, repair, XDG/HOME fallback tests ok with t.TempDir.
+- T5 feat(theme): palette, big-digit font, bars, formatters. RED: undefined Big; GREEN after `-update`: big/bars goldens, widths, 62-cell rounding, mix() reproduces on-dark hex levels.
 
 ## Next step
-T5.
+T6.
