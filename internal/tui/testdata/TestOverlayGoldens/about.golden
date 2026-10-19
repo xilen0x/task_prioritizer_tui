@@ -1,42 +1,42 @@
-  TAREAS   4/4 tareas  ·  máximo 4 en pantalla                                                                 dom 18 oct  14:03:27 
+  TASKS   4/4 tasks  ·  max 4 on screen                                                                        Sun 18 Oct  14:03:27 
                                                                                                                                     
- ╭─ ▶ FOCO · TAREA 1 ─────────────────────────────────────────────────────────────────────────────╮  ╭─ PROGRESO ─────────────────╮ 
- │   EN CURSO   P1 alta  ·  estimado 6 h                                                          │  │                            │ 
+ ╭─ ▶ FOCUS · TASK 1 ─────────────────────────────────────────────────────────────────────────────╮  ╭─ PROGRESS ─────────────────╮ 
+ │   IN PROGRESS   P1 high  ·  estimate 6 h                                                       │  │                            │ 
  │                                                                                                │  │  ░░░    ░░░    ░░░    ███  │ 
- │  Migrar la base de datos a PostgreSQL 16                                                       │  │  ░░░    ░░░    ░░░    ███  │ 
+ │  Migrate the database to PostgreSQL 16                                                         │  │  ░░░    ░░░    ░░░    ███  │ 
  │                                                                                                │  │  ░░░    ░░░    ░░░    ███  │ 
  │                                                                                                │  │  ░░░    ░░░    ░░░    ███  │ 
- │                                                            │   POMODORO · TRABAJO · corriendo  │  │  ███    ░░░    ░░░    ███  │ 
- │  PROGRESO                                                  │   ████   ██████    ██  ██ ██████  │  │  ███    ░░░    ░░░    ███  │ 
+ │                                                            │   POMODORO · WORK · running       │  │  ███    ░░░    ░░░    ███  │ 
+ │  PROGRESS                                                  │   ████   ██████    ██  ██ ██████  │  │  ███    ░░░    ░░░    ███  │ 
  │  ██████ ██████ ██  ██                                      │     ██       ██ ██ ██  ██     ██  │  │  ███    ░░░    ░░░    ███  │ 
  │      ██ ██  ██     ██                                      │     ██       ██    ██████ ██████  │  │  ███    ░░░    ░░░    ███  │ 
  │      ██ ██  ██   ██                                        │     ██       ██ ██     ██     ██  │  │  ███    ███    ░░░    ███  │ 
  │      ██ ██  ██ ██                                          │   ██████     ██        ██ ██████  │  │  ███    ███    ░░░    ███  │ 
- │      ██ ██████ ██  ██              ╭─ ACERCA DE ──────────────────────────────────────────╮    │  │  ███    ███    ░░░    ███  │ 
+ │      ██ ██████ ██  ██              ╭─ ABOUT ──────────────────────────────────────────────╮    │  │  ███    ███    ░░░    ███  │ 
  │                                    │                                                      │    │  │  ███    ███    ░░░    ███  │ 
- │  ██████████████████████████████████│  tareas  v0.3.0                                      │    │  │  ███    ███    ░░░    ███  │ 
+ │  ██████████████████████████████████│  tasks  v0.3.0                                       │    │  │  ███    ███    ░░░    ███  │ 
  ╰────────────────────────────────────│                                                      │────╯  │                            │ 
-                                      │  Monitor de tareas para la terminal. Hasta 4 tareas  │       │   1      2      3      4   │ 
- ╭────────────────────────────────────│  en pantalla y una en foco, con temporizador         │────╮  │  70%    40%    0%    100%  │ 
- │                                    │  pomodoro.                                           │    │  ╰────────────────────────────╯ 
- │  2   Revisar PR del módulo de backu│                                                      │0%  │                                 
- │      EN CURSO · P2 media · 00:30:20│  Pomodoro        25 min trabajo · 5 min descanso     │    │  ╭─ RESUMEN ──────────────────╮ 
- │                                    │  Descanso largo  15 min cada 4 pomodoros             │    │  │                            │ 
- ╰────────────────────────────────────│  Hoy             2 pomodoros completados             │────╯  │  EN CURSO               2  │ 
-                                      │                                                      │       │                            │ 
- ╭────────────────────────────────────│  Esc cerrar                                          │────╮  │                            │ 
- │                                    ╰──────────────────────────────────────────────────────╯    │  │                            │ 
- │  3   Actualizar paquetes del servidor                               ░░░░░░░░░░░░░░░░░░     0%  │  │  PENDIENTES             1  │ 
- │      PENDIENTE · P3 baja · 00:00:00 de 1 h                                                     │  │                            │ 
+                                      │  A task monitor for the terminal. Up to 4 tasks on   │       │   1      2      3      4   │ 
+ ╭────────────────────────────────────│  screen and one in focus, with a pomodoro timer.     │────╮  │  70%    40%    0%    100%  │ 
+ │                                    │                                                      │    │  ╰────────────────────────────╯ 
+ │  2   Review the backups module PR  │  Pomodoro        25 min work · 5 min break           │0%  │                                 
+ │      IN PROGRESS · P2 medium · 00:3│  Long break      15 min every 4 pomodoros            │    │  ╭─ SUMMARY ──────────────────╮ 
+ │                                    │  Today           2 pomodoros completed               │    │  │                            │ 
+ ╰────────────────────────────────────│                                                      │────╯  │  IN PROGRESS            2  │ 
+                                      │  Esc close                                           │       │                            │ 
+ ╭────────────────────────────────────╰──────────────────────────────────────────────────────╯────╮  │                            │ 
+ │                                                                                                │  │                            │ 
+ │  3   Update the server packages                                     ░░░░░░░░░░░░░░░░░░     0%  │  │  TODO                   1  │ 
+ │      TODO · P3 low · 00:00:00 of 1 h                                                           │  │                            │ 
  │                                                                                                │  │                            │ 
  ╰────────────────────────────────────────────────────────────────────────────────────────────────╯  │                            │ 
-                                                                                                     │  HECHAS                 1  │ 
+                                                                                                     │  DONE                   1  │ 
  ╭────────────────────────────────────────────────────────────────────────────────────────────────╮  │                            │ 
  │                                                                                                │  │                            │ 
- │  4   Escribir el changelog v0.3                                     ██████████████████   100%  │  │                            │ 
- │      HECHA · P3 baja · 00:45:00 de 1 h                                                         │  │  TIEMPO TOTAL        2:39  │ 
+ │  4   Write the v0.3 changelog                                       ██████████████████   100%  │  │                            │ 
+ │      DONE · P3 low · 00:45:00 of 1 h                                                           │  │  TOTAL TIME          2:39  │ 
  │                                                                                                │  │                            │ 
  ╰────────────────────────────────────────────────────────────────────────────────────────────────╯  ╰────────────────────────────╯ 
                                                                                                                                     
- ↑↓ mover   Enter enfocar   e editar   espacio cambiar estado   + − progreso   x borrar   p pomodoro   a acerca de                  
-  F1  Ayuda    F2  Nueva    F3  Editar    F4  Estado    F5  Foco    F8  Borrar    F6  Pomodoro    F9  Acerca    F10  Salir          
+ ↑↓ move   Enter focus   e edit   space change status   + − progress   x delete   p pomodoro   a about                              
+  F1  Help    F2  New    F3  Edit    F4  Status    F5  Focus    F8  Delete    F6  Pomodoro    F9  About    F10  Quit                

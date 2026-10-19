@@ -49,7 +49,7 @@ type editor struct {
 func newEditor(isNew bool, draft tasks.Task) *editor {
 	in := textinput.New()
 	in.Prompt = ""
-	in.Placeholder = "Escribe un título"
+	in.Placeholder = "Type a title"
 	in.CharLimit = 120
 	in.Width = modalW - 4 - labelColW - 3
 	in.Cursor.SetMode(cursor.CursorStatic)
@@ -102,7 +102,7 @@ func (m *Model) askDelete() {
 
 func (m Model) onConfirmKey(key string) (tea.Model, tea.Cmd) {
 	switch key {
-	case "s", "S", "enter":
+	case "y", "Y", "enter":
 		return m.mutate(func(m *Model) {
 			m.board.Delete(m.confirmID)
 			m.confirmID = 0
@@ -152,7 +152,7 @@ func (m Model) onEditorKey(k tea.KeyMsg) (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
-// saveEditor stores the draft; empty titles become "Tarea sin título".
+// saveEditor stores the draft; empty titles become "Untitled task".
 func (m *Model) saveEditor() {
 	e := m.editor
 	d := e.draft
@@ -212,9 +212,9 @@ func composite(base, dlg []string) []string {
 func (m Model) viewEditor() []string {
 	e := m.editor
 	bg := theme.Ink1
-	title := "NUEVA TAREA"
+	title := "NEW TASK"
 	if !e.isNew {
-		title = "EDITAR · TAREA " + strconv.Itoa(m.board.Num(e.draft.ID))
+		title = "EDIT · TASK " + strconv.Itoa(m.board.Num(e.draft.ID))
 	}
 	spec := boxSpec{width: modalW, title: title, titleFg: theme.Accent, border: theme.Accent, bg: bg, padX: 2}
 	inner := modalW - 2 - 2*spec.padX
@@ -238,7 +238,7 @@ func (m Model) viewEditor() []string {
 
 	var body []string
 	body = append(body, blank(inner, bg))
-	body = append(body, row(fieldTitle, "TÍTULO", func(rowBg string) string {
+	body = append(body, row(fieldTitle, "TITLE", func(rowBg string) string {
 		in := e.input
 		in.TextStyle = st(theme.OnDark1, rowBg).Bold(true)
 		in.PlaceholderStyle = st(theme.OnDark4, rowBg)
@@ -246,47 +246,47 @@ func (m Model) viewEditor() []string {
 		in.Cursor.TextStyle = st(theme.OnDark1, rowBg).Bold(true)
 		return in.View()
 	})...)
-	body = append(body, row(fieldStatus, "ESTADO", func(rowBg string) string {
+	body = append(body, row(fieldStatus, "STATUS", func(rowBg string) string {
 		var parts []string
 		for _, s := range tasks.Statuses() {
 			parts = append(parts, opt(statusLabel[s], d.Status == s, statusColor[s], rowBg))
 		}
 		return strings.Join(parts, blank(1, rowBg))
 	})...)
-	body = append(body, row(fieldPrio, "PRIORIDAD", func(rowBg string) string {
+	body = append(body, row(fieldPrio, "PRIORITY", func(rowBg string) string {
 		var parts []string
 		for p := tasks.PrioMin; p <= tasks.PrioMax; p++ {
 			parts = append(parts, opt(prioLabel[p], d.Prio == p, theme.OnDark1, rowBg))
 		}
 		return strings.Join(parts, blank(1, rowBg))
 	})...)
-	body = append(body, row(fieldProgress, "PROGRESO", func(rowBg string) string {
+	body = append(body, row(fieldProgress, "PROGRESS", func(rowBg string) string {
 		color := string(theme.PctColor(d.Progress))
 		fill, empty := theme.Bar(m.bar, d.Progress, modalBarW)
 		return paint("◂", theme.Accent, rowBg) + blank(1, rowBg) + paint(fill, color, rowBg) + paint(empty, theme.Ink2, rowBg) +
 			blank(1, rowBg) + paint("▸", theme.Accent, rowBg) + blank(2, rowBg) + bold(pctText(d.Progress), color, rowBg)
 	})...)
-	body = append(body, row(fieldEst, "ESTIMADO", func(rowBg string) string {
+	body = append(body, row(fieldEst, "ESTIMATE", func(rowBg string) string {
 		return paint("◂", theme.Accent, rowBg) + blank(2, rowBg) + bold(theme.HoursLabel(d.Est), theme.OnDark1, rowBg) +
 			blank(2, rowBg) + paint("▸", theme.Accent, rowBg)
 	})...)
 	body = append(body, blank(inner, bg), paint(strings.Repeat("─", inner), theme.OnDarkRule, bg))
-	buttons := bold(" Enter Guardar ", theme.White, theme.Accent) + blank(1, bg) + paint(" Esc Cancelar ", theme.OnDark1, theme.Ink2)
-	body = append(body, fit(paint("Tab campo · ←→ cambiar valor", theme.OnDark3, bg), inner-lenW(buttons), bg)+buttons)
+	buttons := bold(" Enter Save ", theme.White, theme.Accent) + blank(1, bg) + paint(" Esc Cancel ", theme.OnDark1, theme.Ink2)
+	body = append(body, fit(paint("Tab field · ←→ change value", theme.OnDark3, bg), inner-lenW(buttons), bg)+buttons)
 	return box(spec, body)
 }
 
 func (m Model) viewConfirm() []string {
 	bg := theme.Ink1
-	spec := boxSpec{width: confirmW, title: "BORRAR TAREA", titleFg: theme.DangerBorder, border: theme.Danger, bg: bg, padX: 2}
+	spec := boxSpec{width: confirmW, title: "DELETE TASK", titleFg: theme.DangerBorder, border: theme.Danger, bg: bg, padX: 2}
 	inner := confirmW - 2 - 2*spec.padX
 	t := m.board.Get(m.confirmID)
 	body := []string{""}
-	for _, l := range wrapLines("¿Borrar «"+t.Title+"»?", inner, 3) {
+	for _, l := range wrapLines("Delete «"+t.Title+"»?", inner, 3) {
 		body = append(body, bold(l, theme.OnDark1, bg))
 	}
-	body = append(body, "", paint("Se pierde el progreso y el tiempo registrado.", theme.OnDark3, bg), "")
-	buttons := bold(" S Borrar ", theme.White, theme.Danger) + blank(1, bg) + paint(" N Cancelar ", theme.OnDark1, theme.Ink2)
+	body = append(body, "", paint("Progress and logged time will be lost.", theme.OnDark3, bg), "")
+	buttons := bold(" Y Delete ", theme.White, theme.Danger) + blank(1, bg) + paint(" N Cancel ", theme.OnDark1, theme.Ink2)
 	body = append(body, fitRight(buttons, inner, bg))
 	return box(spec, body)
 }
@@ -307,46 +307,46 @@ func infoRows(rows [][2]string, keyFg string, keyBold bool) []string {
 
 func (m Model) viewAbout() []string {
 	bg := theme.Ink1
-	spec := boxSpec{width: infoW, title: "ACERCA DE", titleFg: theme.OnDark2, border: theme.OnDarkBorder, bg: bg, padX: 2}
+	spec := boxSpec{width: infoW, title: "ABOUT", titleFg: theme.OnDark2, border: theme.OnDarkBorder, bg: bg, padX: 2}
 	inner := infoW - 2 - 2*spec.padX
 	done := m.pomo.Done
-	doneLabel := strconv.Itoa(done) + " pomodoros completados"
+	doneLabel := strconv.Itoa(done) + " pomodoros completed"
 	if done == 1 {
-		doneLabel = "1 pomodoro completado"
+		doneLabel = "1 pomodoro completed"
 	}
-	body := []string{"", bold("tareas", theme.OnDark1, bg) + blank(2, bg) + bold("v0.3.0", theme.Accent, bg), ""}
-	for _, l := range wrapLines("Monitor de tareas para la terminal. Hasta 4 tareas en pantalla y una en foco, con temporizador pomodoro.", inner, 4) {
+	body := []string{"", bold("tasks", theme.OnDark1, bg) + blank(2, bg) + bold("v0.3.0", theme.Accent, bg), ""}
+	for _, l := range wrapLines("A task monitor for the terminal. Up to 4 tasks on screen and one in focus, with a pomodoro timer.", inner, 4) {
 		body = append(body, paint(l, theme.OnDark2, bg))
 	}
 	body = append(body, "")
 	body = append(body, infoRows([][2]string{
-		{"Pomodoro", "25 min trabajo · 5 min descanso"},
-		{"Descanso largo", "15 min cada 4 pomodoros"},
-		{"Hoy", doneLabel},
+		{"Pomodoro", "25 min work · 5 min break"},
+		{"Long break", "15 min every 4 pomodoros"},
+		{"Today", doneLabel},
 	}, theme.OnDark3, false)...)
-	body = append(body, "", paint("Esc", theme.OnDark1, bg)+paint(" cerrar", theme.OnDark3, bg))
+	body = append(body, "", paint("Esc", theme.OnDark1, bg)+paint(" close", theme.OnDark3, bg))
 	return box(spec, body)
 }
 
 func viewHelp() []string {
 	bg := theme.Ink1
-	spec := boxSpec{width: infoW, title: "AYUDA", titleFg: theme.OnDark2, border: theme.OnDarkBorder, bg: bg, padX: 2}
+	spec := boxSpec{width: infoW, title: "HELP", titleFg: theme.OnDark2, border: theme.OnDarkBorder, bg: bg, padX: 2}
 	inner := infoW - 2 - 2*spec.padX
 	body := []string{""}
 	body = append(body, infoRows([][2]string{
-		{"↑ ↓  j k", "Mover la selección"},
-		{"Enter  F5", "Poner la tarea en foco"},
-		{"n  F2", "Nueva tarea (máximo 4)"},
-		{"e  F3", "Editar la tarea seleccionada"},
-		{"espacio  F4", "Pendiente → en curso → hecha"},
-		{"+  −", "Progreso ±10%"},
-		{"x  F8", "Borrar"},
-		{"p  F6", "Pausar o reanudar el pomodoro"},
-		{"r", "Reiniciar el pomodoro"},
-		{"a  F9", "Acerca de"},
+		{"↑ ↓  j k", "Move the selection"},
+		{"Enter  F5", "Put the task in focus"},
+		{"n  F2", "New task (max 4)"},
+		{"e  F3", "Edit the selected task"},
+		{"space  F4", "To do → in progress → done"},
+		{"+  −", "Progress ±10%"},
+		{"x  F8", "Delete (y confirms)"},
+		{"p  F6", "Pause or resume the pomodoro"},
+		{"r", "Reset the pomodoro"},
+		{"a  F9", "About"},
 	}, theme.Accent, true)...)
 	body = append(body, "")
-	for _, l := range wrapLines("El tiempo de la tarea en foco solo suma durante los bloques de trabajo.", inner, 2) {
+	for _, l := range wrapLines("The focused task logs time only in work blocks.", inner, 2) {
 		body = append(body, paint(l, theme.OnDark3, bg))
 	}
 	return box(spec, body)

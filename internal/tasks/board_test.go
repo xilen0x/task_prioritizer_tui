@@ -62,10 +62,10 @@ func TestCycle(t *testing.T) {
 		wantStatus   Status
 		wantProgress int
 	}{
-		{"pendiente to curso keeps progress", Task{Status: Pendiente, Progress: 20}, Curso, 20},
-		{"curso to hecha forces 100", Task{Status: Curso, Progress: 40}, Hecha, 100},
-		{"hecha to pendiente drops 100 to 90", Task{Status: Hecha, Progress: 100}, Pendiente, 90},
-		{"hecha below 100 keeps progress", Task{Status: Hecha, Progress: 70}, Pendiente, 70},
+		{"todo to doing keeps progress", Task{Status: Todo, Progress: 20}, Doing, 20},
+		{"doing to done forces 100", Task{Status: Doing, Progress: 40}, Done, 100},
+		{"done to todo drops 100 to 90", Task{Status: Done, Progress: 100}, Todo, 90},
+		{"done below 100 keeps progress", Task{Status: Done, Progress: 70}, Todo, 70},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -85,13 +85,13 @@ func TestBump(t *testing.T) {
 		wantStatus   Status
 		wantProgress int
 	}{
-		{"reaching 100 sets hecha", Task{Status: Curso, Progress: 90}, 10, Hecha, 100},
-		{"clamps at 100", Task{Status: Hecha, Progress: 100}, 10, Hecha, 100},
-		{"lowering hecha sets curso", Task{Status: Hecha, Progress: 100}, -10, Curso, 90},
-		{"pendiente above 0 sets curso", Task{Status: Pendiente, Progress: 0}, 10, Curso, 10},
-		{"pendiente at 0 stays pendiente", Task{Status: Pendiente, Progress: 0}, -10, Pendiente, 0},
-		{"curso stays curso", Task{Status: Curso, Progress: 50}, -10, Curso, 40},
-		{"curso down to 0 stays curso", Task{Status: Curso, Progress: 10}, -10, Curso, 0},
+		{"reaching 100 sets done", Task{Status: Doing, Progress: 90}, 10, Done, 100},
+		{"clamps at 100", Task{Status: Done, Progress: 100}, 10, Done, 100},
+		{"lowering done sets doing", Task{Status: Done, Progress: 100}, -10, Doing, 90},
+		{"todo above 0 sets doing", Task{Status: Todo, Progress: 0}, 10, Doing, 10},
+		{"todo at 0 stays todo", Task{Status: Todo, Progress: 0}, -10, Todo, 0},
+		{"doing stays doing", Task{Status: Doing, Progress: 50}, -10, Doing, 40},
+		{"doing down to 0 stays doing", Task{Status: Doing, Progress: 10}, -10, Doing, 0},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -107,8 +107,8 @@ func TestBoardCycleAndBumpActOnSelection(t *testing.T) {
 	b := Demo()
 	b.SelID = 3
 	b.Cycle()
-	if got := b.Get(3).Status; got != Curso {
-		t.Fatalf("after Cycle status = %s, want curso", got)
+	if got := b.Get(3).Status; got != Doing {
+		t.Fatalf("after Cycle status = %s, want doing", got)
 	}
 	b.Bump(10)
 	if got := b.Get(3).Progress; got != 10 {
@@ -120,15 +120,15 @@ func TestBoardCycleAndBumpActOnSelection(t *testing.T) {
 }
 
 func TestDraftSteps(t *testing.T) {
-	t.Run("status step wraps and hecha forces 100", func(t *testing.T) {
-		d := Task{Status: Pendiente, Progress: 30}
+	t.Run("status step wraps and done forces 100", func(t *testing.T) {
+		d := Task{Status: Todo, Progress: 30}
 		d = d.StatusStepped(-1)
-		if d.Status != Hecha || d.Progress != 100 {
+		if d.Status != Done || d.Progress != 100 {
 			t.Fatalf("got %s/%d", d.Status, d.Progress)
 		}
 		d = d.StatusStepped(1)
-		if d.Status != Pendiente || d.Progress != 100 {
-			t.Fatalf("leaving hecha in editor keeps progress, got %s/%d", d.Status, d.Progress)
+		if d.Status != Todo || d.Progress != 100 {
+			t.Fatalf("leaving done in editor keeps progress, got %s/%d", d.Status, d.Progress)
 		}
 	})
 	t.Run("prio clamps 1..3", func(t *testing.T) {
@@ -137,17 +137,17 @@ func TestDraftSteps(t *testing.T) {
 			t.Fatal("prio clamp failed")
 		}
 	})
-	t.Run("progress step does not promote pendiente", func(t *testing.T) {
-		d := Task{Status: Pendiente}.ProgressStepped(1)
-		if d.Status != Pendiente || d.Progress != 10 {
+	t.Run("progress step does not promote todo", func(t *testing.T) {
+		d := Task{Status: Todo}.ProgressStepped(1)
+		if d.Status != Todo || d.Progress != 10 {
 			t.Fatalf("got %s/%d", d.Status, d.Progress)
 		}
-		d = Task{Status: Hecha, Progress: 100}.ProgressStepped(-1)
-		if d.Status != Curso || d.Progress != 90 {
+		d = Task{Status: Done, Progress: 100}.ProgressStepped(-1)
+		if d.Status != Doing || d.Progress != 90 {
 			t.Fatalf("got %s/%d", d.Status, d.Progress)
 		}
-		d = Task{Status: Curso, Progress: 90}.ProgressStepped(1)
-		if d.Status != Hecha {
+		d = Task{Status: Doing, Progress: 90}.ProgressStepped(1)
+		if d.Status != Done {
 			t.Fatalf("got %s", d.Status)
 		}
 	})
@@ -174,7 +174,7 @@ func TestAdd(t *testing.T) {
 		if got.ID != 1 || b.FocusID != 1 || b.SelID != 1 || b.NextID != 2 {
 			t.Fatalf("got id=%d focus=%d sel=%d next=%d", got.ID, b.FocusID, b.SelID, b.NextID)
 		}
-		if got.Title != "Tarea sin título" {
+		if got.Title != "Untitled task" {
 			t.Fatalf("empty title stored as %q", got.Title)
 		}
 	})
@@ -204,7 +204,7 @@ func TestUpdate(t *testing.T) {
 	d.Prio = 1
 	b.Update(d)
 	got := b.Get(2)
-	if got.Title != "Tarea sin título" || got.Prio != 1 {
+	if got.Title != "Untitled task" || got.Prio != 1 {
 		t.Fatalf("got %+v", got)
 	}
 	if ids(b.Tasks)[1] != 2 {
@@ -254,19 +254,19 @@ func TestTrackElapsed(t *testing.T) {
 	b := Demo()
 	b.TrackElapsed(1)
 	if b.Get(1).Elapsed != 5048 {
-		t.Fatalf("focused curso task elapsed = %d", b.Get(1).Elapsed)
+		t.Fatalf("focused doing task elapsed = %d", b.Get(1).Elapsed)
 	}
-	b.FocusID = 3 // pendiente
+	b.FocusID = 3 // todo
 	b.TrackElapsed(1)
 	if b.Get(3).Elapsed != 0 {
-		t.Fatal("pendiente focus must not accrue time")
+		t.Fatal("todo focus must not accrue time")
 	}
 }
 
 func TestStats(t *testing.T) {
 	b := Demo()
 	s := b.Stats()
-	want := Stats{Curso: 2, Pendiente: 1, Hecha: 1, Elapsed: 5047 + 1820 + 2700}
+	want := Stats{Doing: 2, Todo: 1, Done: 1, Elapsed: 5047 + 1820 + 2700}
 	if s != want {
 		t.Fatalf("Stats() = %+v, want %+v", s, want)
 	}

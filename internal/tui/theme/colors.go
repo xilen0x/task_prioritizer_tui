@@ -28,7 +28,7 @@ const (
 	OnDarkBorder = "#4E535A"
 	OnDarkRule   = "#3D424A"
 
-	Curso = "#FFFE5A"
+	Doing = "#FFFE5A"
 )
 
 // C converts a hex constant to a lipgloss colour.

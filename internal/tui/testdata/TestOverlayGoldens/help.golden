@@ -1,42 +1,42 @@
-  TAREAS   4/4 tareas  ·  máximo 4 en pantalla                                                                 dom 18 oct  14:03:27 
+  TASKS   4/4 tasks  ·  max 4 on screen                                                                        Sun 18 Oct  14:03:27 
                                                                                                                                     
- ╭─ ▶ FOCO · TAREA 1 ─────────────────────────────────────────────────────────────────────────────╮  ╭─ PROGRESO ─────────────────╮ 
- │   EN CURSO   P1 alta  ·  estimado 6 h                                                          │  │                            │ 
+ ╭─ ▶ FOCUS · TASK 1 ─────────────────────────────────────────────────────────────────────────────╮  ╭─ PROGRESS ─────────────────╮ 
+ │   IN PROGRESS   P1 high  ·  estimate 6 h                                                       │  │                            │ 
  │                                                                                                │  │  ░░░    ░░░    ░░░    ███  │ 
- │  Migrar la base de datos a PostgreSQL 16                                                       │  │  ░░░    ░░░    ░░░    ███  │ 
+ │  Migrate the database to PostgreSQL 16                                                         │  │  ░░░    ░░░    ░░░    ███  │ 
  │                                                                                                │  │  ░░░    ░░░    ░░░    ███  │ 
  │                                                                                                │  │  ░░░    ░░░    ░░░    ███  │ 
- │                                                            │   POMODORO · TRABAJO · corriendo  │  │  ███    ░░░    ░░░    ███  │ 
- │  PROGRESO                                                  │   ████   ██████    ██  ██ ██████  │  │  ███    ░░░    ░░░    ███  │ 
+ │                                                            │   POMODORO · WORK · running       │  │  ███    ░░░    ░░░    ███  │ 
+ │  PROGRESS                                                  │   ████   ██████    ██  ██ ██████  │  │  ███    ░░░    ░░░    ███  │ 
  │  ██████ ██████ ██  ██                                      │     ██       ██ ██ ██  ██     ██  │  │  ███    ░░░    ░░░    ███  │ 
  │      ██ ██  ██     ██                                      │     ██       ██    ██████ ██████  │  │  ███    ░░░    ░░░    ███  │ 
  │      ██ ██  ██   ██                                        │     ██       ██ ██     ██     ██  │  │  ███    ███    ░░░    ███  │ 
- │      ██ ██  ██ ██                  ╭─ AYUDA ──────────────────────────────────────────────╮██  │  │  ███    ███    ░░░    ███  │ 
+ │      ██ ██  ██ ██                  ╭─ HELP ───────────────────────────────────────────────╮██  │  │  ███    ███    ░░░    ███  │ 
  │      ██ ██████ ██  ██              │                                                      │    │  │  ███    ███    ░░░    ███  │ 
- │                                    │  ↑ ↓  j k        Mover la selección                  │    │  │  ███    ███    ░░░    ███  │ 
- │  ██████████████████████████████████│  Enter  F5       Poner la tarea en foco              │    │  │  ███    ███    ░░░    ███  │ 
- ╰────────────────────────────────────│  n  F2           Nueva tarea (máximo 4)              │────╯  │                            │ 
-                                      │  e  F3           Editar la tarea seleccionada        │       │   1      2      3      4   │ 
- ╭────────────────────────────────────│  espacio  F4     Pendiente → en curso → hecha        │────╮  │  70%    40%    0%    100%  │ 
- │                                    │  +  −            Progreso ±10%                       │    │  ╰────────────────────────────╯ 
- │  2   Revisar PR del módulo de backu│  x  F8           Borrar                              │0%  │                                 
- │      EN CURSO · P2 media · 00:30:20│  p  F6           Pausar o reanudar el pomodoro       │    │  ╭─ RESUMEN ──────────────────╮ 
- │                                    │  r               Reiniciar el pomodoro               │    │  │                            │ 
- ╰────────────────────────────────────│  a  F9           Acerca de                           │────╯  │  EN CURSO               2  │ 
+ │                                    │  ↑ ↓  j k        Move the selection                  │    │  │  ███    ███    ░░░    ███  │ 
+ │  ██████████████████████████████████│  Enter  F5       Put the task in focus               │    │  │  ███    ███    ░░░    ███  │ 
+ ╰────────────────────────────────────│  n  F2           New task (max 4)                    │────╯  │                            │ 
+                                      │  e  F3           Edit the selected task              │       │   1      2      3      4   │ 
+ ╭────────────────────────────────────│  space  F4       To do → in progress → done          │────╮  │  70%    40%    0%    100%  │ 
+ │                                    │  +  −            Progress ±10%                       │    │  ╰────────────────────────────╯ 
+ │  2   Review the backups module PR  │  x  F8           Delete (y confirms)                 │0%  │                                 
+ │      IN PROGRESS · P2 medium · 00:3│  p  F6           Pause or resume the pomodoro        │    │  ╭─ SUMMARY ──────────────────╮ 
+ │                                    │  r               Reset the pomodoro                  │    │  │                            │ 
+ ╰────────────────────────────────────│  a  F9           About                               │────╯  │  IN PROGRESS            2  │ 
                                       │                                                      │       │                            │ 
- ╭────────────────────────────────────│  El tiempo de la tarea en foco solo suma durante     │────╮  │                            │ 
- │                                    │  los bloques de trabajo.                             │    │  │                            │ 
- │  3   Actualizar paquetes del servid╰──────────────────────────────────────────────────────╯0%  │  │  PENDIENTES             1  │ 
- │      PENDIENTE · P3 baja · 00:00:00 de 1 h                                                     │  │                            │ 
+ ╭────────────────────────────────────│  The focused task logs time only in work blocks.     │────╮  │                            │ 
+ │                                    ╰──────────────────────────────────────────────────────╯    │  │                            │ 
+ │  3   Update the server packages                                     ░░░░░░░░░░░░░░░░░░     0%  │  │  TODO                   1  │ 
+ │      TODO · P3 low · 00:00:00 of 1 h                                                           │  │                            │ 
  │                                                                                                │  │                            │ 
  ╰────────────────────────────────────────────────────────────────────────────────────────────────╯  │                            │ 
-                                                                                                     │  HECHAS                 1  │ 
+                                                                                                     │  DONE                   1  │ 
  ╭────────────────────────────────────────────────────────────────────────────────────────────────╮  │                            │ 
  │                                                                                                │  │                            │ 
- │  4   Escribir el changelog v0.3                                     ██████████████████   100%  │  │                            │ 
- │      HECHA · P3 baja · 00:45:00 de 1 h                                                         │  │  TIEMPO TOTAL        2:39  │ 
+ │  4   Write the v0.3 changelog                                       ██████████████████   100%  │  │                            │ 
+ │      DONE · P3 low · 00:45:00 of 1 h                                                           │  │  TOTAL TIME          2:39  │ 
  │                                                                                                │  │                            │ 
  ╰────────────────────────────────────────────────────────────────────────────────────────────────╯  ╰────────────────────────────╯ 
                                                                                                                                     
- ↑↓ mover   Enter enfocar   e editar   espacio cambiar estado   + − progreso   x borrar   p pomodoro   a acerca de                  
-  F1  Ayuda    F2  Nueva    F3  Editar    F4  Estado    F5  Foco    F8  Borrar    F6  Pomodoro    F9  Acerca    F10  Salir          
+ ↑↓ move   Enter focus   e edit   space change status   + − progress   x delete   p pomodoro   a about                              
+  F1  Help    F2  New    F3  Edit    F4  Status    F5  Focus    F8  Delete    F6  Pomodoro    F9  About    F10  Quit                

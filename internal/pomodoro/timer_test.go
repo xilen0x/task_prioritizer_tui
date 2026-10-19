@@ -4,7 +4,7 @@ import "testing"
 
 func TestNewStartsRunningWorkBlock(t *testing.T) {
 	got := New()
-	want := Timer{Phase: Trabajo, Left: WorkSeconds, Running: true}
+	want := Timer{Phase: Work, Left: WorkSeconds, Running: true}
 	if got != want {
 		t.Fatalf("New() = %+v, want %+v", got, want)
 	}
@@ -17,13 +17,13 @@ func TestTick(t *testing.T) {
 		want       Timer
 		wantWorked bool
 	}{
-		{"paused does nothing", Timer{Phase: Trabajo, Left: 10}, Timer{Phase: Trabajo, Left: 10}, false},
-		{"work counts down", Timer{Phase: Trabajo, Left: 10, Running: true}, Timer{Phase: Trabajo, Left: 9, Running: true}, true},
-		{"break counts down without work", Timer{Phase: Descanso, Left: 10, Running: true}, Timer{Phase: Descanso, Left: 9, Running: true}, false},
-		{"work end starts short break", Timer{Phase: Trabajo, Left: 1, Running: true, Done: 0}, Timer{Phase: Descanso, Left: ShortBreakSeconds, Running: true, Done: 1}, true},
-		{"fourth pomodoro starts long break", Timer{Phase: Trabajo, Left: 1, Running: true, Done: 3}, Timer{Phase: Descanso, Left: LongBreakSeconds, Running: true, Done: 4}, true},
-		{"eighth pomodoro starts long break", Timer{Phase: Trabajo, Left: 1, Running: true, Done: 7}, Timer{Phase: Descanso, Left: LongBreakSeconds, Running: true, Done: 8}, true},
-		{"break end starts work", Timer{Phase: Descanso, Left: 1, Running: true, Done: 4}, Timer{Phase: Trabajo, Left: WorkSeconds, Running: true, Done: 4}, false},
+		{"paused does nothing", Timer{Phase: Work, Left: 10}, Timer{Phase: Work, Left: 10}, false},
+		{"work counts down", Timer{Phase: Work, Left: 10, Running: true}, Timer{Phase: Work, Left: 9, Running: true}, true},
+		{"break counts down without work", Timer{Phase: Break, Left: 10, Running: true}, Timer{Phase: Break, Left: 9, Running: true}, false},
+		{"work end starts short break", Timer{Phase: Work, Left: 1, Running: true, Done: 0}, Timer{Phase: Break, Left: ShortBreakSeconds, Running: true, Done: 1}, true},
+		{"fourth pomodoro starts long break", Timer{Phase: Work, Left: 1, Running: true, Done: 3}, Timer{Phase: Break, Left: LongBreakSeconds, Running: true, Done: 4}, true},
+		{"eighth pomodoro starts long break", Timer{Phase: Work, Left: 1, Running: true, Done: 7}, Timer{Phase: Break, Left: LongBreakSeconds, Running: true, Done: 8}, true},
+		{"break end starts work", Timer{Phase: Break, Left: 1, Running: true, Done: 4}, Timer{Phase: Work, Left: WorkSeconds, Running: true, Done: 4}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -45,25 +45,25 @@ func TestFullCycleOfTicks(t *testing.T) {
 			worked++
 		}
 	}
-	if tm.Phase != Descanso || tm.Left != ShortBreakSeconds || tm.Done != 1 || worked != WorkSeconds {
+	if tm.Phase != Break || tm.Left != ShortBreakSeconds || tm.Done != 1 || worked != WorkSeconds {
 		t.Fatalf("after one work block: %+v worked=%d", tm, worked)
 	}
 }
 
 func TestToggleAndReset(t *testing.T) {
-	tm := Timer{Phase: Descanso, Left: 42, Running: true, Done: 3}
+	tm := Timer{Phase: Break, Left: 42, Running: true, Done: 3}
 	if tm.Toggled().Running {
 		t.Fatal("Toggled must pause")
 	}
 	r := tm.Reset()
-	want := Timer{Phase: Trabajo, Left: WorkSeconds, Running: false, Done: 3}
+	want := Timer{Phase: Work, Left: WorkSeconds, Running: false, Done: 3}
 	if r != want {
 		t.Fatalf("Reset() = %+v, want %+v", r, want)
 	}
 }
 
 func TestLabels(t *testing.T) {
-	tm := Timer{Phase: Trabajo, Left: 1500 - 437, Done: 6}
+	tm := Timer{Phase: Work, Left: 1500 - 437, Done: 6}
 	if got := tm.MMSS(); got != "17:43" {
 		t.Fatalf("MMSS() = %q", got)
 	}

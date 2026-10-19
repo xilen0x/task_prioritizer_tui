@@ -55,7 +55,7 @@ func TestBigWidth(t *testing.T) {
 
 func TestBarsGolden(t *testing.T) {
 	var sb strings.Builder
-	for _, st := range []BarStyle{Bloques, ASCII, Fino} {
+	for _, st := range []BarStyle{Blocks, ASCII, Thin} {
 		for _, p := range []int{0, 40, 70, 100} {
 			f, e := Bar(st, p, 18)
 			sb.WriteString(string(st) + " " + f + e + "\n")
@@ -67,7 +67,7 @@ func TestBarsGolden(t *testing.T) {
 }
 
 func TestBarRounding(t *testing.T) {
-	f, e := Bar(Bloques, 70, 62)
+	f, e := Bar(Blocks, 70, 62)
 	if n := len([]rune(f)); n != 43 {
 		t.Fatalf("fill = %d cells, want 43", n)
 	}
@@ -77,11 +77,14 @@ func TestBarRounding(t *testing.T) {
 }
 
 func TestParseBarStyle(t *testing.T) {
-	if s, ok := ParseBarStyle("fino"); !ok || s != Fino {
-		t.Fatal("fino not parsed")
+	if s, ok := ParseBarStyle("thin"); !ok || s != Thin {
+		t.Fatal("thin not parsed")
 	}
-	if s, ok := ParseBarStyle("nope"); ok || s != Bloques {
-		t.Fatal("unknown style must fall back to bloques")
+	if s, ok := ParseBarStyle("bloques"); !ok || s != Blocks {
+		t.Fatal("legacy bloques not parsed")
+	}
+	if s, ok := ParseBarStyle("nope"); ok || s != Blocks {
+		t.Fatal("unknown style must fall back to blocks")
 	}
 }
 
@@ -116,7 +119,7 @@ func TestFormat(t *testing.T) {
 	if got := HoursLabel(6); got != "6 h" {
 		t.Fatalf("HoursLabel(6) = %q", got)
 	}
-	if got := HoursLabel(1.5); got != "1,5 h" {
+	if got := HoursLabel(1.5); got != "1.5 h" {
 		t.Fatalf("HoursLabel(1.5) = %q", got)
 	}
 	if got := TotalLabel(5047 + 1820 + 2700); got != "2:39" {

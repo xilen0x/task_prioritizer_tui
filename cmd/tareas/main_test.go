@@ -10,8 +10,8 @@ import (
 )
 
 func TestParseFlags(t *testing.T) {
-	o, err := parseFlags([]string{"--bar=fino", "--plain-digits", "--demo"})
-	if err != nil || o.bar != "fino" || !o.plainDigits || !o.demo {
+	o, err := parseFlags([]string{"--bar=thin", "--plain-digits", "--demo"})
+	if err != nil || o.bar != "thin" || !o.plainDigits || !o.demo {
 		t.Fatalf("got %+v err=%v", o, err)
 	}
 	if _, err := parseFlags([]string{"--bar=x"}); err == nil {

@@ -74,29 +74,36 @@ type BarStyle string
 
 // Bar styles (the design's barStyle prop).
 const (
-	Bloques BarStyle = "bloques"
-	ASCII   BarStyle = "ascii"
-	Fino    BarStyle = "fino"
+	Blocks BarStyle = "blocks"
+	ASCII  BarStyle = "ascii"
+	Thin   BarStyle = "thin"
 )
 
 var barGlyphs = map[BarStyle][2]string{
-	Bloques: {"█", "░"},
-	ASCII:   {"#", "·"},
-	Fino:    {"━", "─"},
+	Blocks: {"█", "░"},
+	ASCII:  {"#", "·"},
+	Thin:   {"━", "─"},
 }
 
-// ParseBarStyle parses a flag value, falling back to Bloques.
+// legacyBarStyles maps the old Spanish flag values to the current ones.
+var legacyBarStyles = map[string]BarStyle{"bloques": Blocks, "fino": Thin}
+
+// ParseBarStyle parses a flag value, falling back to Blocks. The old
+// Spanish values (bloques, fino) are still accepted.
 func ParseBarStyle(s string) (BarStyle, bool) {
+	if b, ok := legacyBarStyles[s]; ok {
+		return b, true
+	}
 	if _, ok := barGlyphs[BarStyle(s)]; ok {
 		return BarStyle(s), true
 	}
-	return Bloques, false
+	return Blocks, false
 }
 
 func glyphPair(st BarStyle) (on, off string) {
 	g, ok := barGlyphs[st]
 	if !ok {
-		g = barGlyphs[Bloques]
+		g = barGlyphs[Blocks]
 	}
 	return g[0], g[1]
 }

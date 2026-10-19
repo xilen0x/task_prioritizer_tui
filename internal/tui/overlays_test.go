@@ -17,7 +17,7 @@ func TestOverlayGoldens(t *testing.T) {
 		keys []string
 	}{
 		{"edit", []string{"e", "down", "down", "right"}},
-		{"new", []string{"down", "x", "s", "n", "N", "u", "e", "v", "a"}},
+		{"new", []string{"down", "x", "y", "n", "N", "e", "w"}},
 		{"confirm", []string{"down", "x"}},
 		{"help", []string{"?"}},
 		{"about", []string{"a"}},
@@ -33,11 +33,11 @@ func TestOverlayGoldens(t *testing.T) {
 
 func TestEditorSavesDraft(t *testing.T) {
 	spy := &saveSpy{}
-	// select task 2, edit: retitle, status → hecha, prio → P1, estimate +1h
+	// select task 2, edit: retitle, status → done, prio → P1, estimate +1h
 	m := press(newDemo(spy), "down", "e", "backspace", "backspace", "X",
 		"tab", "right", "tab", "left", "tab", "tab", "right", "right", "enter")
 	got := m.board.Get(2)
-	want := tasks.Task{ID: 2, Title: "Revisar PR del módulo de backuX", Status: tasks.Hecha, Prio: 1, Progress: 100, Est: 3, Elapsed: 1820}
+	want := tasks.Task{ID: 2, Title: "Review the backups module X", Status: tasks.Done, Prio: 1, Progress: 100, Est: 3, Elapsed: 1820}
 	if got != want {
 		t.Fatalf("got  %+v\nwant %+v", got, want)
 	}
@@ -88,8 +88,8 @@ func TestNewTaskEmptyTitleAndLimit(t *testing.T) {
 	if full.editor != nil {
 		t.Fatal("n must do nothing with 4 tasks")
 	}
-	if !strings.Contains(full.View(), "Nueva") {
-		t.Fatal("key bar must still list Nueva")
+	if !strings.Contains(full.View(), "F2  New") {
+		t.Fatal("key bar must still list New")
 	}
 }
 
@@ -113,8 +113,9 @@ func TestConfirmKeys(t *testing.T) {
 		keys    []string
 		wantLen int
 	}{
-		{"s deletes", []string{"x", "s"}, 3},
-		{"S deletes", []string{"x", "S"}, 3},
+		{"y deletes", []string{"x", "y"}, 3},
+		{"Y deletes", []string{"x", "Y"}, 3},
+		{"s no longer deletes", []string{"x", "s"}, 4},
 		{"enter deletes", []string{"delete", "enter"}, 3},
 		{"f8 then n cancels", []string{"f8", "n"}, 4},
 		{"N cancels", []string{"x", "N"}, 4},
@@ -129,7 +130,7 @@ func TestConfirmKeys(t *testing.T) {
 			}
 		})
 	}
-	m := press(newDemo(nil), "x", "s")
+	m := press(newDemo(nil), "x", "y")
 	if m.board.FocusID != 2 || m.board.SelID != 2 {
 		t.Fatalf("deleting focus: focus=%d sel=%d", m.board.FocusID, m.board.SelID)
 	}

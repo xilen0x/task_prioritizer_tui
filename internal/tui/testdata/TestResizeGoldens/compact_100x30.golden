@@ -1,30 +1,30 @@
-  TAREAS   4/4 tareas  ·  máximo 4 en pantalla                                 dom 18 oct  14:03:27 
+  TASKS   4/4 tasks  ·  max 4 on screen                                        Sun 18 Oct  14:03:27 
                                                                                                     
- ╭─ ▶ FOCO · TAREA 1 ─────────────────────────────────────────────╮  ╭─ PROGRESO ─────────────────╮ 
- │   EN CURSO   P1 alta  ·  estimado 6 h                          │  │                            │ 
+ ╭─ ▶ FOCUS · TASK 1 ─────────────────────────────────────────────╮  ╭─ PROGRESS ─────────────────╮ 
+ │   IN PROGRESS   P1 high  ·  estimate 6 h                       │  │                            │ 
  │                                                                │  │  ░░░    ░░░    ░░░    ███  │ 
- │  Migrar la base de datos a PostgreSQL 16                       │  │  ░░░    ░░░    ░░░    ███  │ 
+ │  Migrate the database to PostgreSQL 16                         │  │  ░░░    ░░░    ░░░    ███  │ 
  │                                                                │  │  ░░░    ░░░    ░░░    ███  │ 
  │                                                                │  │  ░░░    ░░░    ░░░    ███  │ 
- │                            │   POMODORO · TRABAJO · corriendo  │  │  ███    ░░░    ░░░    ███  │ 
- │  PROGRESO                  │   17:43                           │  │  ███    ░░░    ░░░    ███  │ 
- │  70%                       │   ●●○○  p pausa · r reiniciar     │  │  ███    ░░░    ░░░    ███  │ 
+ │                                 │   POMODORO · WORK · running  │  │  ███    ░░░    ░░░    ███  │ 
+ │  PROGRESS                       │   17:43                      │  │  ███    ░░░    ░░░    ███  │ 
+ │  70%                            │   ●●○○  p pause · r reset    │  │  ███    ░░░    ░░░    ███  │ 
  │                                                                │  │  ███    ███    ░░░    ███  │ 
- │  █████████████████████████████░░░░░░░░░░░░░  +/− ajusta 10%    │  │  ███    ███    ░░░    ███  │ 
+ │  █████████████████████████████░░░░░░░░░░░░░  +/− adjusts 10%   │  │  ███    ███    ░░░    ███  │ 
  ╰────────────────────────────────────────────────────────────────╯  │  ███    ███    ░░░    ███  │ 
  ╭────────────────────────────────────────────────────────────────╮  │  ███    ███    ░░░    ███  │ 
- │  2   Revisar PR del módulo de back… ███████░░░░░░░░░░░    40%  │  │  ███    ███    ░░░    ███  │ 
- │      EN CURSO · P2 media · 00:30:20 de 2 h                     │  │                            │ 
+ │  2   Review the backups module PR   ███████░░░░░░░░░░░    40%  │  │  ███    ███    ░░░    ███  │ 
+ │      IN PROGRESS · P2 medium · 00:30:20 of 2 h                 │  │                            │ 
  ╰────────────────────────────────────────────────────────────────╯  │   1      2      3      4   │ 
  ╭────────────────────────────────────────────────────────────────╮  │  70%    40%    0%    100%  │ 
- │  3   Actualizar paquetes del servi… ░░░░░░░░░░░░░░░░░░     0%  │  ╰────────────────────────────╯ 
- │      PENDIENTE · P3 baja · 00:00:00 de 1 h                     │                                 
- ╰────────────────────────────────────────────────────────────────╯  ╭─ RESUMEN ──────────────────╮ 
- ╭────────────────────────────────────────────────────────────────╮  │  EN CURSO               2  │ 
- │  4   Escribir el changelog v0.3     ██████████████████   100%  │  │  PENDIENTES             1  │ 
- │      HECHA · P3 baja · 00:45:00 de 1 h                         │  │  HECHAS                 1  │ 
- ╰────────────────────────────────────────────────────────────────╯  │  TIEMPO TOTAL        2:39  │ 
+ │  3   Update the server packages     ░░░░░░░░░░░░░░░░░░     0%  │  ╰────────────────────────────╯ 
+ │      TODO · P3 low · 00:00:00 of 1 h                           │                                 
+ ╰────────────────────────────────────────────────────────────────╯  ╭─ SUMMARY ──────────────────╮ 
+ ╭────────────────────────────────────────────────────────────────╮  │  IN PROGRESS            2  │ 
+ │  4   Write the v0.3 changelog       ██████████████████   100%  │  │  TODO                   1  │ 
+ │      DONE · P3 low · 00:45:00 of 1 h                           │  │  DONE                   1  │ 
+ ╰────────────────────────────────────────────────────────────────╯  │  TOTAL TIME          2:39  │ 
                                                                      ╰────────────────────────────╯ 
                                                                                                     
- ↑↓ mover   Enter enfocar   e editar   espacio cambiar estado   + − progreso   x borrar             
- F1 Ayuda  F2 Nueva  F3 Editar  F4 Estado  F5 Foco  F8 Borrar  F6 Pomodoro  F9 Acerca  F10 Salir    
+ ↑↓ move   Enter focus   e edit   space change status   + − progress   x delete   p pomodoro        
+ F1 Help  F2 New  F3 Edit  F4 Status  F5 Focus  F8 Delete  F6 Pomodoro  F9 About  F10 Quit          

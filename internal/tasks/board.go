@@ -17,10 +17,10 @@ func New() Board { return Board{NextID: 1} }
 func Demo() Board {
 	return Board{
 		Tasks: []Task{
-			{ID: 1, Title: "Migrar la base de datos a PostgreSQL 16", Status: Curso, Prio: 1, Progress: 70, Est: 6, Elapsed: 5047},
-			{ID: 2, Title: "Revisar PR del módulo de backups", Status: Curso, Prio: 2, Progress: 40, Est: 2, Elapsed: 1820},
-			{ID: 3, Title: "Actualizar paquetes del servidor", Status: Pendiente, Prio: 3, Progress: 0, Est: 1, Elapsed: 0},
-			{ID: 4, Title: "Escribir el changelog v0.3", Status: Hecha, Prio: 3, Progress: 100, Est: 1, Elapsed: 2700},
+			{ID: 1, Title: "Migrate the database to PostgreSQL 16", Status: Doing, Prio: 1, Progress: 70, Est: 6, Elapsed: 5047},
+			{ID: 2, Title: "Review the backups module PR", Status: Doing, Prio: 2, Progress: 40, Est: 2, Elapsed: 1820},
+			{ID: 3, Title: "Update the server packages", Status: Todo, Prio: 3, Progress: 0, Est: 1, Elapsed: 0},
+			{ID: 4, Title: "Write the v0.3 changelog", Status: Done, Prio: 3, Progress: 100, Est: 1, Elapsed: 2700},
 		},
 		FocusID: 1, SelID: 1, NextID: 5,
 	}
@@ -179,18 +179,18 @@ func (b *Board) Delete(id int) {
 	b.SelID = b.FocusID
 }
 
-// TrackElapsed adds seconds to the focused task when it is en curso. The
+// TrackElapsed adds seconds to the focused task when it is in progress. The
 // caller decides whether the pomodoro is in a running work block.
 func (b *Board) TrackElapsed(seconds int) {
-	if i := b.index(b.FocusID); i >= 0 && b.Tasks[i].Status == Curso {
+	if i := b.index(b.FocusID); i >= 0 && b.Tasks[i].Status == Doing {
 		b.Tasks[i].Elapsed += seconds
 	}
 }
 
 // Stats summarises the board.
 type Stats struct {
-	Curso, Pendiente, Hecha int
-	Elapsed                 int
+	Doing, Todo, Done int
+	Elapsed           int
 }
 
 // Stats counts tasks per status and totals tracked seconds.
@@ -198,12 +198,12 @@ func (b Board) Stats() Stats {
 	var s Stats
 	for _, t := range b.Tasks {
 		switch t.Status {
-		case Curso:
-			s.Curso++
-		case Pendiente:
-			s.Pendiente++
-		case Hecha:
-			s.Hecha++
+		case Doing:
+			s.Doing++
+		case Todo:
+			s.Todo++
+		case Done:
+			s.Done++
 		}
 		s.Elapsed += t.Elapsed
 	}

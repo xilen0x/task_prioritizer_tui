@@ -22,7 +22,7 @@ func init() { lipgloss.SetColorProfile(termenv.Ascii) }
 func fixedClock() time.Time { return time.Date(2026, 10, 18, 14, 3, 27, 0, time.UTC) }
 
 func demoPomo() pomodoro.Timer {
-	return pomodoro.Timer{Phase: pomodoro.Trabajo, Left: 1500 - 437, Running: true, Done: 2}
+	return pomodoro.Timer{Phase: pomodoro.Work, Left: 1500 - 437, Running: true, Done: 2}
 }
 
 type saveSpy struct{ calls int }
@@ -100,12 +100,12 @@ func TestTeatestKeySequenceGolden(t *testing.T) {
 	tm.Send(key("down"))  // select task 2
 	tm.Send(key("enter")) // focus task 2
 	tm.Send(key("down"))  // select task 1
-	tm.Send(key("space")) // task 1 curso -> hecha
+	tm.Send(key("space")) // task 1 doing -> done
 	tm.Send(key("p"))     // pause pomodoro
 	tm.Send(key("f10"))
 	final := tm.FinalModel(t, teatest.WithFinalTimeout(3*time.Second)).(Model)
 	b := final.Board()
-	if b.FocusID != 2 || b.SelID != 1 || b.Get(1).Status != tasks.Hecha || final.Pomo().Running {
+	if b.FocusID != 2 || b.SelID != 1 || b.Get(1).Status != tasks.Done || final.Pomo().Running {
 		t.Fatalf("unexpected final state: focus=%d sel=%d status=%s running=%v", b.FocusID, b.SelID, b.Get(1).Status, final.Pomo().Running)
 	}
 	golden.RequireEqual(t, []byte(final.View()))
@@ -138,7 +138,7 @@ func TestMainKeys(t *testing.T) {
 			}
 		}},
 		{"f4 cycles status", []string{"f4"}, func(t *testing.T, m Model) {
-			if got := m.board.Get(1).Status; got != tasks.Hecha {
+			if got := m.board.Get(1).Status; got != tasks.Done {
 				t.Fatalf("status = %s", got)
 			}
 		}},

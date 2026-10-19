@@ -72,7 +72,7 @@ func New(o Options) Model {
 		clock = time.Now
 	}
 	if o.Bar == "" {
-		o.Bar = theme.Bloques
+		o.Bar = theme.Blocks
 	}
 	if o.Board.NextID == 0 && len(o.Board.Tasks) == 0 {
 		o.Board = tasks.New()

@@ -10,8 +10,8 @@ type Phase string
 
 // Phases.
 const (
-	Trabajo  Phase = "trabajo"
-	Descanso Phase = "descanso"
+	Work  Phase = "work"
+	Break Phase = "break"
 )
 
 // Block lengths in seconds.
@@ -32,7 +32,7 @@ type Timer struct {
 }
 
 // New returns a running timer at the start of a work block.
-func New() Timer { return Timer{Phase: Trabajo, Left: WorkSeconds, Running: true} }
+func New() Timer { return Timer{Phase: Work, Left: WorkSeconds, Running: true} }
 
 // Tick advances the timer by one second. worked reports whether that
 // second belonged to a running work block (and so counts as task time).
@@ -40,19 +40,19 @@ func (t Timer) Tick() (next Timer, worked bool) {
 	if !t.Running {
 		return t, false
 	}
-	worked = t.Phase == Trabajo
+	worked = t.Phase == Work
 	switch {
 	case t.Left > 1:
 		t.Left--
-	case t.Phase == Trabajo:
+	case t.Phase == Work:
 		t.Done++
-		t.Phase = Descanso
+		t.Phase = Break
 		t.Left = ShortBreakSeconds
 		if t.Done%LongBreakEvery == 0 {
 			t.Left = LongBreakSeconds
 		}
 	default:
-		t.Phase = Trabajo
+		t.Phase = Work
 		t.Left = WorkSeconds
 	}
 	return t, worked
@@ -66,7 +66,7 @@ func (t Timer) Toggled() Timer {
 
 // Reset returns to a paused, full work block, keeping the completed count.
 func (t Timer) Reset() Timer {
-	t.Phase, t.Left, t.Running = Trabajo, WorkSeconds, false
+	t.Phase, t.Left, t.Running = Work, WorkSeconds, false
 	return t
 }
 

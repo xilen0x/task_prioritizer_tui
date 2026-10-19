@@ -15,8 +15,8 @@ const (
 // Screen geometry shared by the views and the mouse hit-testing.
 const (
 	headerRows = 2 // header line + gap; the main area starts below
-	sideChrome = 6 // PROGRESO box: borders, top gap, number and % rows
-	minSummary = 6 // RESUMEN box: borders + four items
+	sideChrome = 6 // PROGRESS box: borders, top gap, number and % rows
+	minSummary = 6 // SUMMARY box: borders + four items
 	minRowH    = 4 // task row: borders + title and meta lines
 )
 
@@ -69,10 +69,10 @@ func (m Model) viewTooSmall() []string {
 	bg := theme.Ink1
 	lines := column(h, w)
 	msg := []string{
-		bold("Terminal demasiado pequeña", theme.OnDark1, bg),
-		paint("Se necesitan al menos "+strconv.Itoa(MinWidth)+"×"+strconv.Itoa(MinHeight)+
-			" (actual "+strconv.Itoa(m.width)+"×"+strconv.Itoa(m.height)+")", theme.OnDark3, bg),
-		bold("F10", theme.Accent, bg) + paint(" salir", theme.OnDark3, bg),
+		bold("Terminal too small", theme.OnDark1, bg),
+		paint("At least "+strconv.Itoa(MinWidth)+"×"+strconv.Itoa(MinHeight)+
+			" is needed (current "+strconv.Itoa(m.width)+"×"+strconv.Itoa(m.height)+")", theme.OnDark3, bg),
+		bold("F10", theme.Accent, bg) + paint(" quit", theme.OnDark3, bg),
 	}
 	top := max(0, (h-len(msg))/2)
 	for i, s := range msg {

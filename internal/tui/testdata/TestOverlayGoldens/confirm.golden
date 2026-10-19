@@ -1,42 +1,42 @@
-  TAREAS   4/4 tareas  ·  máximo 4 en pantalla                                                                 dom 18 oct  14:03:27 
+  TASKS   4/4 tasks  ·  max 4 on screen                                                                        Sun 18 Oct  14:03:27 
                                                                                                                                     
- ╭─ ▶ FOCO · TAREA 1 ─────────────────────────────────────────────────────────────────────────────╮  ╭─ PROGRESO ─────────────────╮ 
- │   EN CURSO   P1 alta  ·  estimado 6 h                                                          │  │                            │ 
+ ╭─ ▶ FOCUS · TASK 1 ─────────────────────────────────────────────────────────────────────────────╮  ╭─ PROGRESS ─────────────────╮ 
+ │   IN PROGRESS   P1 high  ·  estimate 6 h                                                       │  │                            │ 
  │                                                                                                │  │  ░░░    ░░░    ░░░    ███  │ 
- │  Migrar la base de datos a PostgreSQL 16                                                       │  │  ░░░    ░░░    ░░░    ███  │ 
+ │  Migrate the database to PostgreSQL 16                                                         │  │  ░░░    ░░░    ░░░    ███  │ 
  │                                                                                                │  │  ░░░    ░░░    ░░░    ███  │ 
  │                                                                                                │  │  ░░░    ░░░    ░░░    ███  │ 
- │                                                            │   POMODORO · TRABAJO · corriendo  │  │  ███    ░░░    ░░░    ███  │ 
- │  PROGRESO                                                  │   ████   ██████    ██  ██ ██████  │  │  ███    ░░░    ░░░    ███  │ 
+ │                                                            │   POMODORO · WORK · running       │  │  ███    ░░░    ░░░    ███  │ 
+ │  PROGRESS                                                  │   ████   ██████    ██  ██ ██████  │  │  ███    ░░░    ░░░    ███  │ 
  │  ██████ ██████ ██  ██                                      │     ██       ██ ██ ██  ██     ██  │  │  ███    ░░░    ░░░    ███  │ 
  │      ██ ██  ██     ██                                      │     ██       ██    ██████ ██████  │  │  ███    ░░░    ░░░    ███  │ 
  │      ██ ██  ██   ██                                        │     ██       ██ ██     ██     ██  │  │  ███    ███    ░░░    ███  │ 
  │      ██ ██  ██ ██                                          │   ██████     ██        ██ ██████  │  │  ███    ███    ░░░    ███  │ 
- │      ██ ██████ ██  ██                                      │   ●●○○  p pausa · r reiniciar     │  │  ███    ███    ░░░    ███  │ 
+ │      ██ ██████ ██  ██                                      │   ●●○○  p pause · r reset         │  │  ███    ███    ░░░    ███  │ 
  │                                                                                                │  │  ███    ███    ░░░    ███  │ 
- │  ███████████████████████████████████████████░░░░░░░░░░░░░░░░░░░  +/− ajusta 10%                │  │  ███    ███    ░░░    ███  │ 
- ╰──────────────────────────────────╭─ BORRAR TAREA ───────────────────────────────────────────╮──╯  │                            │ 
+ │  ███████████████████████████████████████████░░░░░░░░░░░░░░░░░░░  +/− adjusts 10%               │  │  ███    ███    ░░░    ███  │ 
+ ╰──────────────────────────────────╭─ DELETE TASK ────────────────────────────────────────────╮──╯  │                            │ 
                                     │                                                          │     │   1      2      3      4   │ 
- ╭──────────────────────────────────│  ¿Borrar «Revisar PR del módulo de backups»?             │──╮  │  70%    40%    0%    100%  │ 
+ ╭──────────────────────────────────│  Delete «Review the backups module PR»?                  │──╮  │  70%    40%    0%    100%  │ 
  │                                  │                                                          │  │  ╰────────────────────────────╯ 
- │  2   Revisar PR del módulo de bac│  Se pierde el progreso y el tiempo registrado.           │  │                                 
- │      EN CURSO · P2 media · 00:30:│                                                          │  │  ╭─ RESUMEN ──────────────────╮ 
- │                                  │                                  S Borrar   N Cancelar   │  │  │                            │ 
- ╰──────────────────────────────────╰──────────────────────────────────────────────────────────╯──╯  │  EN CURSO               2  │ 
+ │  2   Review the backups module PR│  Progress and logged time will be lost.                  │  │                                 
+ │      IN PROGRESS · P2 medium · 00│                                                          │  │  ╭─ SUMMARY ──────────────────╮ 
+ │                                  │                                    Y Delete   N Cancel   │  │  │                            │ 
+ ╰──────────────────────────────────╰──────────────────────────────────────────────────────────╯──╯  │  IN PROGRESS            2  │ 
                                                                                                      │                            │ 
  ╭────────────────────────────────────────────────────────────────────────────────────────────────╮  │                            │ 
  │                                                                                                │  │                            │ 
- │  3   Actualizar paquetes del servidor                               ░░░░░░░░░░░░░░░░░░     0%  │  │  PENDIENTES             1  │ 
- │      PENDIENTE · P3 baja · 00:00:00 de 1 h                                                     │  │                            │ 
+ │  3   Update the server packages                                     ░░░░░░░░░░░░░░░░░░     0%  │  │  TODO                   1  │ 
+ │      TODO · P3 low · 00:00:00 of 1 h                                                           │  │                            │ 
  │                                                                                                │  │                            │ 
  ╰────────────────────────────────────────────────────────────────────────────────────────────────╯  │                            │ 
-                                                                                                     │  HECHAS                 1  │ 
+                                                                                                     │  DONE                   1  │ 
  ╭────────────────────────────────────────────────────────────────────────────────────────────────╮  │                            │ 
  │                                                                                                │  │                            │ 
- │  4   Escribir el changelog v0.3                                     ██████████████████   100%  │  │                            │ 
- │      HECHA · P3 baja · 00:45:00 de 1 h                                                         │  │  TIEMPO TOTAL        2:39  │ 
+ │  4   Write the v0.3 changelog                                       ██████████████████   100%  │  │                            │ 
+ │      DONE · P3 low · 00:45:00 of 1 h                                                           │  │  TOTAL TIME          2:39  │ 
  │                                                                                                │  │                            │ 
  ╰────────────────────────────────────────────────────────────────────────────────────────────────╯  ╰────────────────────────────╯ 
                                                                                                                                     
- ↑↓ mover   Enter enfocar   e editar   espacio cambiar estado   + − progreso   x borrar   p pomodoro   a acerca de                  
-  F1  Ayuda    F2  Nueva    F3  Editar    F4  Estado    F5  Foco    F8  Borrar    F6  Pomodoro    F9  Acerca    F10  Salir          
+ ↑↓ move   Enter focus   e edit   space change status   + − progress   x delete   p pomodoro   a about                              
+  F1  Help    F2  New    F3  Edit    F4  Status    F5  Focus    F8  Delete    F6  Pomodoro    F9  About    F10  Quit                

@@ -27,16 +27,14 @@ type options struct {
 func parseFlags(args []string) (options, error) {
 	var o options
 	fs := flag.NewFlagSet("tareas", flag.ContinueOnError)
-	fs.StringVar(&o.bar, "bar", "bloques", "progress bar style: bloques|ascii|fino")
+	fs.StringVar(&o.bar, "bar", "blocks", "progress bar style: blocks|ascii|thin")
 	fs.BoolVar(&o.plainDigits, "plain-digits", false, "render big numbers as plain text")
 	fs.BoolVar(&o.demo, "demo", false, "seed the sample tasks when no saved state exists")
 	if err := fs.Parse(args); err != nil {
 		return o, err
 	}
-	switch o.bar {
-	case "bloques", "ascii", "fino":
-	default:
-		return o, fmt.Errorf("invalid --bar %q (want bloques|ascii|fino)", o.bar)
+	if _, ok := theme.ParseBarStyle(o.bar); !ok {
+		return o, fmt.Errorf("invalid --bar %q (want blocks|ascii|thin)", o.bar)
 	}
 	return o, nil
 }
@@ -54,7 +52,7 @@ func initialState(store *jsonfile.Store, demo bool) (jsonfile.State, error) {
 	if demo {
 		return jsonfile.State{
 			Board: tasks.Demo(),
-			Pomo:  pomodoro.Timer{Phase: pomodoro.Trabajo, Left: pomodoro.WorkSeconds - 437, Running: true, Done: 2},
+			Pomo:  pomodoro.Timer{Phase: pomodoro.Work, Left: pomodoro.WorkSeconds - 437, Running: true, Done: 2},
 		}, nil
 	}
 	return jsonfile.State{Board: tasks.New(), Pomo: pomodoro.New()}, nil

@@ -49,7 +49,7 @@ func TestOverlayFitsCompactScreen(t *testing.T) {
 
 func TestTooSmallStillQuits(t *testing.T) {
 	m := resize(newDemo(nil), 60, 20)
-	if !strings.Contains(m.View(), "Terminal demasiado pequeña") {
+	if !strings.Contains(m.View(), "Terminal too small") {
 		t.Fatal("missing too-small notice")
 	}
 	_, cmd := m.Update(key("f10"))
@@ -85,7 +85,7 @@ func TestMouse(t *testing.T) {
 		}
 	})
 	t.Run("click on free slot opens new task editor", func(t *testing.T) {
-		m := press(newDemo(nil), "x", "s") // 3 tasks: one free slot
+		m := press(newDemo(nil), "x", "y") // 3 tasks: one free slot
 		m = click(m, 10, l.rowTop(2)+1)
 		if m.editor == nil || !m.editor.isNew {
 			t.Fatal("editor not opened")

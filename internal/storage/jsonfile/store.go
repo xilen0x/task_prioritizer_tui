@@ -101,6 +101,13 @@ func (s *Store) Save(st State) error {
 
 func clamp(v, lo, hi int) int { return max(lo, min(hi, v)) }
 
+// Values written by the Spanish versions of the app, mapped on load so
+// existing state files keep working.
+var (
+	legacyStatus = map[tasks.Status]tasks.Status{"pendiente": tasks.Todo, "curso": tasks.Doing, "hecha": tasks.Done}
+	legacyPhase  = map[pomodoro.Phase]pomodoro.Phase{"trabajo": pomodoro.Work, "descanso": pomodoro.Break}
+)
+
 // repair makes a hand-edited or older file safe for the domain.
 func repair(st State) State {
 	b := st.Board
@@ -110,10 +117,13 @@ func repair(st State) State {
 	maxID := 0
 	for i := range b.Tasks {
 		t := &b.Tasks[i]
+		if s, ok := legacyStatus[t.Status]; ok {
+			t.Status = s
+		}
 		switch t.Status {
-		case tasks.Pendiente, tasks.Curso, tasks.Hecha:
+		case tasks.Todo, tasks.Doing, tasks.Done:
 		default:
-			t.Status = tasks.Pendiente
+			t.Status = tasks.Todo
 		}
 		t.Prio = clamp(t.Prio, tasks.PrioMin, tasks.PrioMax)
 		t.Progress = clamp(t.Progress, 0, 100)
@@ -134,14 +144,17 @@ func repair(st State) State {
 	st.Board = b
 
 	p := st.Pomo
+	if ph, ok := legacyPhase[p.Phase]; ok {
+		p.Phase = ph
+	}
 	if p.Done < 0 {
 		p.Done = 0
 	}
 	switch {
-	case p.Phase == pomodoro.Trabajo && p.Left > 0 && p.Left <= pomodoro.WorkSeconds:
-	case p.Phase == pomodoro.Descanso && p.Left > 0 && p.Left <= pomodoro.LongBreakSeconds:
+	case p.Phase == pomodoro.Work && p.Left > 0 && p.Left <= pomodoro.WorkSeconds:
+	case p.Phase == pomodoro.Break && p.Left > 0 && p.Left <= pomodoro.LongBreakSeconds:
 	default:
-		p.Phase, p.Left = pomodoro.Trabajo, pomodoro.WorkSeconds
+		p.Phase, p.Left = pomodoro.Work, pomodoro.WorkSeconds
 	}
 	st.Pomo = p
 	return st
