@@ -44,8 +44,9 @@ try_term() {
 if [ -n "${TERMINAL:-}" ]; then
 	try_term "$TERMINAL" "$app" "$@"
 fi
-for t in gnome-terminal kitty alacritty konsole xfce4-terminal wezterm kgx ptyxis xterm x-terminal-emulator; do
+TERMINALS="gnome-terminal kitty alacritty konsole xfce4-terminal wezterm kgx ptyxis xterm x-terminal-emulator"
+for t in $TERMINALS; do
 	try_term "$t" "$app" "$@"
 done
 
-fail "no supported terminal emulator found. Set \$TERMINAL or install gnome-terminal, kitty, alacritty, konsole, xfce4-terminal or xterm."
+fail "no supported terminal emulator found. Set \$TERMINAL or install one of: $TERMINALS."

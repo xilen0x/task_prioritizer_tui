@@ -60,19 +60,23 @@ download_release() {
 	say "Downloading $asset ($version)..." >&2
 	fetch "$base/$asset" "$1/$asset" || die "download failed: $base/$asset"
 	fetch "$base/checksums.txt" "$1/checksums.txt" || die "download failed: $base/checksums.txt"
-	if have sha256sum; then
-		want=$(awk -v f="$asset" '$2 == f || $2 == "*" f { print $1 }' "$1/checksums.txt")
-		[ -n "$want" ] || die "$asset is not listed in checksums.txt"
-		got=$(sha256sum "$1/$asset" | cut -d ' ' -f 1)
-		[ "$want" = "$got" ] || die "checksum mismatch for $asset"
-		say "Checksum verified." >&2
-	else
-		say "warning: sha256sum not found, skipping checksum verification" >&2
-	fi
+	have sha256sum || die "sha256sum is required to verify the download (install coreutils)"
+	want=$(awk -v f="$asset" '$2 == f || $2 == "*" f { print $1 }' "$1/checksums.txt")
+	[ -n "$want" ] || die "$asset is not listed in checksums.txt"
+	got=$(sha256sum "$1/$asset" | cut -d ' ' -f 1)
+	[ "$want" = "$got" ] || die "checksum mismatch for $asset"
+	say "Checksum verified." >&2
 	echo "$1/$asset"
 }
 
 install_app() {
+	# The launcher path goes into a quoted desktop Exec value, where these
+	# characters would need escaping; reject them up front.
+	case $BIN_DIR in
+	*[\\\"\`\$%]* | *"
+"*) die "PREFIX must not contain \\, \", \`, \$, % or a newline: $PREFIX" ;;
+	esac
+
 	tmp=$(mktemp -d)
 	trap 'rm -rf "$tmp"' EXIT
 	trap 'exit 1' INT TERM
@@ -96,11 +100,14 @@ install_app() {
 	install -m 755 "$src/$NAME-launcher" "$BIN_DIR/$NAME-launcher"
 	install -m 644 "$src/$NAME.svg" "$ICON_DIR/$NAME.svg"
 	# Absolute Exec path: the menu entry works even if $BIN_DIR is not in PATH.
-	sed "s|^Exec=.*|Exec=\"$BIN_DIR/$NAME-launcher\"|" "$src/$NAME.desktop" >"$APP_DIR/$NAME.desktop"
+	EXEC_PATH="$BIN_DIR/$NAME-launcher" awk '/^Exec=/ { print "Exec=\"" ENVIRON["EXEC_PATH"] "\""; next } { print }' \
+		"$src/$NAME.desktop" >"$APP_DIR/$NAME.desktop"
 	chmod 644 "$APP_DIR/$NAME.desktop"
 	refresh_menus
 
-	say "Installed $("$BIN_DIR/$NAME" --version) to $BIN_DIR"
+	# Best effort: a failing --version must not fail an otherwise complete install.
+	label=$("$BIN_DIR/$NAME" --version 2>/dev/null) || label=
+	say "Installed ${label:-$NAME} to $BIN_DIR"
 	say "Menu entry: $APP_DIR/$NAME.desktop"
 	case ":$PATH:" in
 	*":$BIN_DIR:"*) ;;
