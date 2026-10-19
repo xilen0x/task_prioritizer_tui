@@ -16,7 +16,7 @@ vet:
 	go vet ./...
 
 fmt:
-	gofmt -l .
+	@test -z "$$(gofmt -l .)" || (gofmt -l . && exit 1)
 
 check: fmt vet test
 

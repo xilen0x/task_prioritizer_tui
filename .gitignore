@@ -2,3 +2,5 @@
 /task_prioritizer
 *.test
 *.out
+/.atl/
+/odd/
