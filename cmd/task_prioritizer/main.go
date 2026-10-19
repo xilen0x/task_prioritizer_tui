@@ -10,6 +10,7 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 
+	"github.com/xilen0x/task_prioritizer_tui/internal/notify"
 	"github.com/xilen0x/task_prioritizer_tui/internal/pomodoro"
 	"github.com/xilen0x/task_prioritizer_tui/internal/storage/jsonfile"
 	"github.com/xilen0x/task_prioritizer_tui/internal/tasks"
@@ -22,6 +23,7 @@ type options struct {
 	bar         string
 	plainDigits bool
 	demo        bool
+	noAlert     bool
 }
 
 func parseFlags(args []string) (options, error) {
@@ -30,6 +32,7 @@ func parseFlags(args []string) (options, error) {
 	fs.StringVar(&o.bar, "bar", "blocks", "progress bar style: blocks|ascii|thin")
 	fs.BoolVar(&o.plainDigits, "plain-digits", false, "render big numbers as plain text")
 	fs.BoolVar(&o.demo, "demo", false, "seed the sample tasks when no saved state exists")
+	fs.BoolVar(&o.noAlert, "no-alert", false, "no bell or desktop notification when a pomodoro phase ends")
 	if err := fs.Parse(args); err != nil {
 		return o, err
 	}
@@ -72,6 +75,10 @@ func run(o options) error {
 		return err
 	}
 	bar, _ := theme.ParseBarStyle(o.bar)
+	var alert tui.AlertFunc
+	if !o.noAlert {
+		alert = notify.New().Alert
+	}
 	m := tui.New(tui.Options{
 		Board: st.Board,
 		Pomo:  st.Pomo,
@@ -80,6 +87,7 @@ func run(o options) error {
 		},
 		Bar:         bar,
 		PlainDigits: o.plainDigits,
+		Alert:       alert,
 	})
 	_, err = tea.NewProgram(m, tea.WithAltScreen(), tea.WithMouseCellMotion()).Run()
 	return err

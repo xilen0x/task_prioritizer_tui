@@ -345,6 +345,7 @@ func viewHelp() []string {
 		{"p  F6", "Pause or resume the pomodoro"},
 		{"r", "Reset the pomodoro"},
 		{"a  F9", "About"},
+		{"q  F10", "Quit"},
 	}, theme.Accent, true)...)
 	body = append(body, "")
 	for _, l := range wrapLines("The focused task logs time only in work blocks.", inner, 2) {

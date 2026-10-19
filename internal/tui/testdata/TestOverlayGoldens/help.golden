@@ -23,10 +23,10 @@
  │      IN PROGRESS · P2 medium · 00:3│  p  F6           Pause or resume the pomodoro        │    │  ╭─ SUMMARY ──────────────────╮ 
  │                                    │  r               Reset the pomodoro                  │    │  │                            │ 
  ╰────────────────────────────────────│  a  F9           About                               │────╯  │  IN PROGRESS            2  │ 
-                                      │                                                      │       │                            │ 
- ╭────────────────────────────────────│  The focused task logs time only in work blocks.     │────╮  │                            │ 
- │                                    ╰──────────────────────────────────────────────────────╯    │  │                            │ 
- │  3   Update the server packages                                     ░░░░░░░░░░░░░░░░░░     0%  │  │  TODO                   1  │ 
+                                      │  q  F10          Quit                                │       │                            │ 
+ ╭────────────────────────────────────│                                                      │────╮  │                            │ 
+ │                                    │  The focused task logs time only in work blocks.     │    │  │                            │ 
+ │  3   Update the server packages    ╰──────────────────────────────────────────────────────╯0%  │  │  TODO                   1  │ 
  │      TODO · P3 low · 00:00:00 of 1 h                                                           │  │                            │ 
  │                                                                                                │  │                            │ 
  ╰────────────────────────────────────────────────────────────────────────────────────────────────╯  │                            │ 
@@ -38,5 +38,5 @@
  │                                                                                                │  │                            │ 
  ╰────────────────────────────────────────────────────────────────────────────────────────────────╯  ╰────────────────────────────╯ 
                                                                                                                                     
- ↑↓ move   Enter focus   e edit   space change status   + − progress   x delete   p pomodoro   a about                              
+ ↑↓ move   Enter focus   e edit   space change status   + − progress   x delete   p pomodoro   a about   q quit                     
   F1  Help    F2  New    F3  Edit    F4  Status    F5  Focus    F8  Delete    F6  Pomodoro    F9  About    F10  Quit                

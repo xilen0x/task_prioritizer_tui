@@ -166,7 +166,7 @@ func TestMainKeys(t *testing.T) {
 }
 
 func TestQuitSavesAndQuits(t *testing.T) {
-	for _, k := range []tea.KeyMsg{key("f10"), {Type: tea.KeyCtrlC}} {
+	for _, k := range []tea.KeyMsg{key("f10"), {Type: tea.KeyCtrlC}, key("q")} {
 		spy := &saveSpy{}
 		_, cmd := newDemo(spy).Update(k)
 		if cmd == nil || spy.calls != 1 {
@@ -200,5 +200,18 @@ func TestTickRefreshesClock(t *testing.T) {
 	next, _ := m.Update(tickMsg{})
 	if !strings.Contains(next.(Model).View(), "14:03:28") {
 		t.Fatal("clock not refreshed on tick")
+	}
+}
+
+func TestQTypesInsideEditor(t *testing.T) {
+	m := press(newDemo(nil), "e") // the demo board is full, so edit instead of new
+	next, cmd := m.Update(key("q"))
+	if cmd != nil {
+		if _, ok := cmd().(tea.QuitMsg); ok {
+			t.Fatal("q must not quit while the editor is open")
+		}
+	}
+	if got := next.(Model).editor.input.Value(); !strings.HasSuffix(got, "q") {
+		t.Fatalf("title = %q, want a trailing q", got)
 	}
 }

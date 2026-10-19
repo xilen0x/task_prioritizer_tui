@@ -321,7 +321,7 @@ func (m Model) viewHint(w int) string {
 		return fit(bold("Could not save: "+m.saveErr.Error(), theme.Accent, bg), w, bg)
 	}
 	hints := [][2]string{{"↑↓", "move"}, {"Enter", "focus"}, {"e", "edit"}, {"space", "change status"},
-		{"+ −", "progress"}, {"x", "delete"}, {"p", "pomodoro"}, {"a", "about"}}
+		{"+ −", "progress"}, {"x", "delete"}, {"p", "pomodoro"}, {"a", "about"}, {"q", "quit"}}
 	line := ""
 	for i, h := range hints {
 		part := paint(h[0], theme.OnDark1, bg) + paint(" "+h[1], theme.OnDark3, bg)

@@ -4,6 +4,7 @@
 package tui
 
 import (
+	"fmt"
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -26,6 +27,9 @@ const saveEvery = 15
 // SaveFunc persists the board and the pomodoro.
 type SaveFunc func(tasks.Board, pomodoro.Timer) error
 
+// AlertFunc tells the user that a pomodoro phase ended.
+type AlertFunc func(title, body string)
+
 // Options configures a Model.
 type Options struct {
 	Board tasks.Board
@@ -38,6 +42,8 @@ type Options struct {
 	PlainDigits bool
 	// NoTick disables the one-second ticker (used by tests).
 	NoTick bool
+	// Alert is called when a work block or a break ends; nil disables alerts.
+	Alert AlertFunc
 }
 
 // tickMsg is delivered once per second.
@@ -48,6 +54,7 @@ type Model struct {
 	board       tasks.Board
 	pomo        pomodoro.Timer
 	save        SaveFunc
+	alert       AlertFunc
 	clock       func() time.Time
 	now         time.Time
 	bar         theme.BarStyle
@@ -81,7 +88,7 @@ func New(o Options) Model {
 		o.Pomo = pomodoro.New()
 	}
 	return Model{
-		board: o.Board, pomo: o.Pomo, save: o.Save, clock: clock, now: clock(),
+		board: o.Board, pomo: o.Pomo, save: o.Save, alert: o.Alert, clock: clock, now: clock(),
 		bar: o.Bar, plainDigits: o.PlainDigits, noTick: o.NoTick,
 		width: DesignWidth, height: DesignHeight,
 	}
@@ -119,8 +126,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.width, m.height = msg.Width, msg.Height
 		return m, nil
 	case tickMsg:
-		m.onTick()
-		return m, m.tick()
+		ended := m.onTick()
+		return m, tea.Batch(m.tick(), m.alertCmd(ended))
 	case tea.KeyMsg:
 		return m.onKey(msg)
 	case tea.MouseMsg:
@@ -130,11 +137,12 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 // onTick advances the clock and, unless the editor is open, the pomodoro
-// and the focused task's tracked time.
-func (m *Model) onTick() {
+// and the focused task's tracked time. It returns the phase that just
+// ended, or "" when the phase did not change.
+func (m *Model) onTick() (ended pomodoro.Phase) {
 	m.now = m.clock()
 	if m.editor != nil || !m.pomo.Running {
-		return
+		return ""
 	}
 	prev := m.pomo.Phase
 	var worked bool
@@ -145,6 +153,26 @@ func (m *Model) onTick() {
 	m.ticksSinceSave++
 	if m.pomo.Phase != prev || m.ticksSinceSave >= saveEvery {
 		m.persist()
+	}
+	if m.pomo.Phase != prev {
+		return prev
+	}
+	return ""
+}
+
+// alertCmd runs the alert for the phase that just ended, off the update loop.
+func (m Model) alertCmd(ended pomodoro.Phase) tea.Cmd {
+	if m.alert == nil || ended == "" {
+		return nil
+	}
+	title, body := "Break over", fmt.Sprintf("Back to work: %d min.", pomodoro.WorkSeconds/60)
+	if ended == pomodoro.Work {
+		title, body = "Pomodoro done", fmt.Sprintf("Take a %d min break.", m.pomo.Left/60)
+	}
+	alert := m.alert
+	return func() tea.Msg {
+		alert(title, body)
+		return nil
 	}
 }
 
@@ -208,6 +236,9 @@ func (m Model) onMainKey(key string) (tea.Model, tea.Cmd) {
 		return m.mutate(func(m *Model) { m.pomo = m.pomo.Toggled() })
 	case "r":
 		return m.mutate(func(m *Model) { m.pomo = m.pomo.Reset() })
+	case "q":
+		// Alternative to F10, which some terminals (GNOME Terminal) capture.
+		return m.quit()
 	}
 	return m, nil
 }
