@@ -1,4 +1,4 @@
-# tareas
+# task_prioritizer
 
 A terminal task monitor written in Go with [Bubbletea](https://github.com/charmbracelet/bubbletea).
 Up to four tasks on screen, one of them in focus, plus a pomodoro timer.
