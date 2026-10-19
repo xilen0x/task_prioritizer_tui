@@ -5,6 +5,8 @@ Up to four tasks on screen, one of them in focus, plus a pomodoro timer.
 The UI is in English and follows the `Tareas TUI` design (laid out for a 132×42 terminal).
 The binary and the data directory keep the original name `tareas`, so existing saved state keeps working.
 
+![tareas running with the demo data](docs/screenshot.png)
+
 ## Run
 
 ```sh
