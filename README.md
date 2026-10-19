@@ -139,7 +139,7 @@ Issues and pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Author
 
-Carlos Astorga
+xilen0x
 
 ## License
 
