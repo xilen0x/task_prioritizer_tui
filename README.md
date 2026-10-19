@@ -10,6 +10,32 @@ State saved by older versions under `~/.local/share/tareas/` is moved to the new
 
 ![task_prioritizer running with the demo data](docs/screenshot.png)
 
+## Install
+
+Linux (x86_64 or arm64), no root or Go needed:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/xilen0x/task_prioritizer_tui/main/install.sh | sh
+```
+
+This installs `task_prioritizer` to `~/.local/bin` and adds a **Task Prioritizer** entry to the
+application menu. Set `PREFIX` to install elsewhere.
+
+```sh
+# a specific version
+curl -fsSL https://raw.githubusercontent.com/xilen0x/task_prioritizer_tui/main/install.sh | TASK_PRIORITIZER_VERSION=v1.0.0 sh
+
+# uninstall (saved tasks are kept)
+curl -fsSL https://raw.githubusercontent.com/xilen0x/task_prioritizer_tui/main/install.sh | sh -s -- --uninstall
+
+# from a clone of this repository (needs Go)
+make install     # make uninstall to remove it
+```
+
+The menu entry opens the app in a 132×42 terminal window. It uses `$TERMINAL` if set, otherwise
+the first one found of GNOME Terminal, kitty, Alacritty, Konsole, Xfce Terminal, WezTerm,
+Console (kgx), Ptyxis and xterm; WezTerm, Console and Ptyxis open at their default size.
+
 ## Requirements
 
 **To run it**
@@ -39,13 +65,13 @@ In GNOME Terminal, `F10` opens the terminal's own menu instead of quitting; use 
 macOS and other Linux distributions are expected to work but have not been tested yet.
 Windows has not been tested. Reports from other platforms are welcome.
 
-## Install and run
+## Usage
 
 ```sh
 go run ./cmd/task_prioritizer           # start (empty board on first run)
 go run ./cmd/task_prioritizer --demo    # seed the sample tasks when no saved state exists
 
-# or install the binary
+# or install the binary with Go
 go install github.com/xilen0x/task_prioritizer_tui/cmd/task_prioritizer@latest
 ```
 
