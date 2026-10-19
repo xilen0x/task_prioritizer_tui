@@ -6,8 +6,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/xilenox/tareas/internal/pomodoro"
-	"github.com/xilenox/tareas/internal/tasks"
+	"github.com/xilen0x/task_prioritizer_tui/internal/pomodoro"
+	"github.com/xilen0x/task_prioritizer_tui/internal/tasks"
 )
 
 func TestRoundTrip(t *testing.T) {
@@ -87,7 +87,7 @@ func TestDefaultPath(t *testing.T) {
 	t.Run("uses XDG_DATA_HOME", func(t *testing.T) {
 		t.Setenv("XDG_DATA_HOME", "/x/data")
 		got, err := DefaultPath()
-		if err != nil || got != filepath.Join("/x/data", "tareas", "state.json") {
+		if err != nil || got != filepath.Join("/x/data", "task_prioritizer", "state.json") {
 			t.Fatalf("got %q err=%v", got, err)
 		}
 	})
@@ -96,7 +96,7 @@ func TestDefaultPath(t *testing.T) {
 		t.Setenv("XDG_DATA_HOME", "")
 		t.Setenv("HOME", home)
 		got, err := DefaultPath()
-		if err != nil || got != filepath.Join(home, ".local", "share", "tareas", "state.json") {
+		if err != nil || got != filepath.Join(home, ".local", "share", "task_prioritizer", "state.json") {
 			t.Fatalf("got %q err=%v", got, err)
 		}
 	})
@@ -139,4 +139,56 @@ func TestLoadMapsLegacySpanishValues(t *testing.T) {
 	if st2.Pomo != (pomodoro.Timer{Phase: pomodoro.Work, Left: 600, Running: true}) {
 		t.Fatalf("legacy work phase not mapped: %+v", st2.Pomo)
 	}
+}
+
+func TestMigrateLegacy(t *testing.T) {
+	t.Run("moves the old tareas state when the new file is missing", func(t *testing.T) {
+		root := t.TempDir()
+		legacy := filepath.Join(root, "tareas", "state.json")
+		if err := os.MkdirAll(filepath.Dir(legacy), 0o755); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(legacy, []byte(`{"old":true}`), 0o644); err != nil {
+			t.Fatal(err)
+		}
+		path := filepath.Join(root, "task_prioritizer", "state.json")
+		if err := MigrateLegacy(path); err != nil {
+			t.Fatalf("migrate: %v", err)
+		}
+		got, err := os.ReadFile(path)
+		if err != nil || string(got) != `{"old":true}` {
+			t.Fatalf("got %q err=%v", got, err)
+		}
+		if _, err := os.Stat(legacy); !os.IsNotExist(err) {
+			t.Fatalf("legacy file still present: %v", err)
+		}
+	})
+	t.Run("keeps an existing new file untouched", func(t *testing.T) {
+		root := t.TempDir()
+		legacy := filepath.Join(root, "tareas", "state.json")
+		path := filepath.Join(root, "task_prioritizer", "state.json")
+		for p, body := range map[string]string{legacy: "old", path: "new"} {
+			if err := os.MkdirAll(filepath.Dir(p), 0o755); err != nil {
+				t.Fatal(err)
+			}
+			if err := os.WriteFile(p, []byte(body), 0o644); err != nil {
+				t.Fatal(err)
+			}
+		}
+		if err := MigrateLegacy(path); err != nil {
+			t.Fatalf("migrate: %v", err)
+		}
+		if got, _ := os.ReadFile(path); string(got) != "new" {
+			t.Fatalf("new file overwritten: %q", got)
+		}
+	})
+	t.Run("does nothing without legacy state", func(t *testing.T) {
+		path := filepath.Join(t.TempDir(), "task_prioritizer", "state.json")
+		if err := MigrateLegacy(path); err != nil {
+			t.Fatalf("migrate: %v", err)
+		}
+		if _, err := os.Stat(path); !os.IsNotExist(err) {
+			t.Fatalf("unexpected file: %v", err)
+		}
+	})
 }

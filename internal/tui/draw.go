@@ -6,7 +6,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/charmbracelet/x/ansi"
 
-	"github.com/xilenox/tareas/internal/tui/theme"
+	"github.com/xilen0x/task_prioritizer_tui/internal/tui/theme"
 )
 
 // Low-level drawing helpers. Every visible cell is painted with an

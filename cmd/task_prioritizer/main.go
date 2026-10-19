@@ -1,4 +1,4 @@
-// Command tareas is a terminal task monitor: up to four tasks on screen,
+// Command task_prioritizer is a terminal task monitor: up to four tasks on screen,
 // one in focus, with a pomodoro timer.
 package main
 
@@ -10,11 +10,11 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 
-	"github.com/xilenox/tareas/internal/pomodoro"
-	"github.com/xilenox/tareas/internal/storage/jsonfile"
-	"github.com/xilenox/tareas/internal/tasks"
-	"github.com/xilenox/tareas/internal/tui"
-	"github.com/xilenox/tareas/internal/tui/theme"
+	"github.com/xilen0x/task_prioritizer_tui/internal/pomodoro"
+	"github.com/xilen0x/task_prioritizer_tui/internal/storage/jsonfile"
+	"github.com/xilen0x/task_prioritizer_tui/internal/tasks"
+	"github.com/xilen0x/task_prioritizer_tui/internal/tui"
+	"github.com/xilen0x/task_prioritizer_tui/internal/tui/theme"
 )
 
 // options holds the parsed command-line flags.
@@ -26,7 +26,7 @@ type options struct {
 
 func parseFlags(args []string) (options, error) {
 	var o options
-	fs := flag.NewFlagSet("tareas", flag.ContinueOnError)
+	fs := flag.NewFlagSet("task_prioritizer", flag.ContinueOnError)
 	fs.StringVar(&o.bar, "bar", "blocks", "progress bar style: blocks|ascii|thin")
 	fs.BoolVar(&o.plainDigits, "plain-digits", false, "render big numbers as plain text")
 	fs.BoolVar(&o.demo, "demo", false, "seed the sample tasks when no saved state exists")
@@ -63,6 +63,9 @@ func run(o options) error {
 	if err != nil {
 		return err
 	}
+	if err := jsonfile.MigrateLegacy(path); err != nil {
+		return err
+	}
 	store := jsonfile.New(path)
 	st, err := initialState(store, o.demo)
 	if err != nil {
@@ -86,12 +89,12 @@ func main() {
 	o, err := parseFlags(os.Args[1:])
 	if err != nil {
 		if !errors.Is(err, flag.ErrHelp) {
-			fmt.Fprintln(os.Stderr, "tareas:", err)
+			fmt.Fprintln(os.Stderr, "task_prioritizer:", err)
 		}
 		os.Exit(2)
 	}
 	if err := run(o); err != nil {
-		fmt.Fprintln(os.Stderr, "tareas:", err)
+		fmt.Fprintln(os.Stderr, "task_prioritizer:", err)
 		os.Exit(1)
 	}
 }

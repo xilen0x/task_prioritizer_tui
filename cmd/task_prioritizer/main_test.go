@@ -4,9 +4,9 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/xilenox/tareas/internal/pomodoro"
-	"github.com/xilenox/tareas/internal/storage/jsonfile"
-	"github.com/xilenox/tareas/internal/tasks"
+	"github.com/xilen0x/task_prioritizer_tui/internal/pomodoro"
+	"github.com/xilen0x/task_prioritizer_tui/internal/storage/jsonfile"
+	"github.com/xilen0x/task_prioritizer_tui/internal/tasks"
 )
 
 func TestParseFlags(t *testing.T) {

@@ -1,4 +1,4 @@
-module github.com/xilenox/tareas
+module github.com/xilen0x/task_prioritizer_tui
 
 go 1.23.6
 

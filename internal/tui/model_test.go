@@ -11,8 +11,8 @@ import (
 	"github.com/charmbracelet/x/exp/teatest"
 	"github.com/muesli/termenv"
 
-	"github.com/xilenox/tareas/internal/pomodoro"
-	"github.com/xilenox/tareas/internal/tasks"
+	"github.com/xilen0x/task_prioritizer_tui/internal/pomodoro"
+	"github.com/xilen0x/task_prioritizer_tui/internal/tasks"
 )
 
 // Goldens are plain text: the ASCII profile drops colours and attributes.

@@ -1,4 +1,4 @@
-// Package tui is the Bubbletea front end of tareas. The Model is the
+// Package tui is the Bubbletea front end of task_prioritizer. The Model is the
 // container: it owns the domain state, maps keys to domain operations and
 // persists after every change. Rendering lives in the view*.go files.
 package tui
@@ -8,9 +8,9 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 
-	"github.com/xilenox/tareas/internal/pomodoro"
-	"github.com/xilenox/tareas/internal/tasks"
-	"github.com/xilenox/tareas/internal/tui/theme"
+	"github.com/xilen0x/task_prioritizer_tui/internal/pomodoro"
+	"github.com/xilen0x/task_prioritizer_tui/internal/tasks"
+	"github.com/xilen0x/task_prioritizer_tui/internal/tui/theme"
 )
 
 // Design size of the terminal.

@@ -1,4 +1,4 @@
-// Package theme holds the tareas palette, bar glyph styles, the big-digit
+// Package theme holds the task_prioritizer palette, bar glyph styles, the big-digit
 // font and small presentation formatters.
 package theme
 

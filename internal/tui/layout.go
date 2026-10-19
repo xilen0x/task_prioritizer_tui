@@ -3,7 +3,7 @@ package tui
 import (
 	"strconv"
 
-	"github.com/xilenox/tareas/internal/tui/theme"
+	"github.com/xilen0x/task_prioritizer_tui/internal/tui/theme"
 )
 
 // Minimum usable terminal size; below it only a notice is shown.

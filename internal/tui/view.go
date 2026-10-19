@@ -7,9 +7,9 @@ import (
 
 	"github.com/charmbracelet/lipgloss"
 
-	"github.com/xilenox/tareas/internal/pomodoro"
-	"github.com/xilenox/tareas/internal/tasks"
-	"github.com/xilenox/tareas/internal/tui/theme"
+	"github.com/xilen0x/task_prioritizer_tui/internal/pomodoro"
+	"github.com/xilen0x/task_prioritizer_tui/internal/tasks"
+	"github.com/xilen0x/task_prioritizer_tui/internal/tui/theme"
 )
 
 // UI copy shared by several views.

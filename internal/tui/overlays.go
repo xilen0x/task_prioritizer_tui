@@ -9,8 +9,8 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/x/ansi"
 
-	"github.com/xilenox/tareas/internal/tasks"
-	"github.com/xilenox/tareas/internal/tui/theme"
+	"github.com/xilen0x/task_prioritizer_tui/internal/tasks"
+	"github.com/xilen0x/task_prioritizer_tui/internal/tui/theme"
 )
 
 // Editor fields in Tab order.
@@ -314,7 +314,7 @@ func (m Model) viewAbout() []string {
 	if done == 1 {
 		doneLabel = "1 pomodoro completed"
 	}
-	body := []string{"", bold("tasks", theme.OnDark1, bg) + blank(2, bg) + bold("v0.3.0", theme.Accent, bg), ""}
+	body := []string{"", bold("task_prioritizer", theme.OnDark1, bg) + blank(2, bg) + bold("v0.3.0", theme.Accent, bg), ""}
 	for _, l := range wrapLines("A task monitor for the terminal. Up to 4 tasks on screen and one in focus, with a pomodoro timer.", inner, 4) {
 		body = append(body, paint(l, theme.OnDark2, bg))
 	}

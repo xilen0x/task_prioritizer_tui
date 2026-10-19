@@ -8,7 +8,7 @@ import (
 	"github.com/charmbracelet/x/exp/golden"
 	"github.com/muesli/termenv"
 
-	"github.com/xilenox/tareas/internal/tasks"
+	"github.com/xilen0x/task_prioritizer_tui/internal/tasks"
 )
 
 func TestOverlayGoldens(t *testing.T) {

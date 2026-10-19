@@ -1,4 +1,4 @@
 /bin/
-/tareas
+/task_prioritizer
 *.test
 *.out

@@ -10,8 +10,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/xilenox/tareas/internal/pomodoro"
-	"github.com/xilenox/tareas/internal/tasks"
+	"github.com/xilen0x/task_prioritizer_tui/internal/pomodoro"
+	"github.com/xilen0x/task_prioritizer_tui/internal/tasks"
 )
 
 const formatVersion = 1
@@ -36,8 +36,15 @@ func New(path string) *Store { return &Store{path: path} }
 // Path is the file the store uses.
 func (s *Store) Path() string { return s.path }
 
-// DefaultPath is $XDG_DATA_HOME/tareas/state.json, falling back to
-// ~/.local/share/tareas/state.json.
+// AppDir is the data directory name; legacyAppDir is the name used before
+// the app was renamed.
+const (
+	AppDir       = "task_prioritizer"
+	legacyAppDir = "tareas"
+)
+
+// DefaultPath is $XDG_DATA_HOME/task_prioritizer/state.json, falling back to
+// ~/.local/share/task_prioritizer/state.json.
 func DefaultPath() (string, error) {
 	dir := os.Getenv("XDG_DATA_HOME")
 	if dir == "" {
@@ -47,7 +54,29 @@ func DefaultPath() (string, error) {
 		}
 		dir = filepath.Join(home, ".local", "share")
 	}
-	return filepath.Join(dir, "tareas", "state.json"), nil
+	return filepath.Join(dir, AppDir, "state.json"), nil
+}
+
+// MigrateLegacy moves the state file from the old "tareas" data directory
+// next to path's directory when path does not exist yet.
+func MigrateLegacy(path string) error {
+	if _, err := os.Stat(path); err == nil || !errors.Is(err, fs.ErrNotExist) {
+		return err
+	}
+	legacy := filepath.Join(filepath.Dir(filepath.Dir(path)), legacyAppDir, filepath.Base(path))
+	if _, err := os.Stat(legacy); err != nil {
+		if errors.Is(err, fs.ErrNotExist) {
+			return nil
+		}
+		return err
+	}
+	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+		return fmt.Errorf("create data directory: %w", err)
+	}
+	if err := os.Rename(legacy, path); err != nil {
+		return fmt.Errorf("move legacy state: %w", err)
+	}
+	return nil
 }
 
 // Load reads the state. found is false (with a nil error) when the file

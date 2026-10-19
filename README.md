@@ -3,15 +3,18 @@
 A terminal task monitor written in Go with [Bubbletea](https://github.com/charmbracelet/bubbletea).
 Up to four tasks on screen, one of them in focus, plus a pomodoro timer.
 The UI is in English and follows the `Tareas TUI` design (laid out for a 132×42 terminal).
-The binary and the data directory keep the original name `tareas`, so existing saved state keeps working.
+State saved by older versions under `~/.local/share/tareas/` is moved to the new data directory on first run.
 
-![tareas running with the demo data](docs/screenshot.png)
+![task_prioritizer running with the demo data](docs/screenshot.png)
 
 ## Run
 
 ```sh
-go run ./cmd/tareas           # start (empty board on first run)
-go run ./cmd/tareas --demo    # seed the sample tasks when no saved state exists
+go run ./cmd/task_prioritizer           # start (empty board on first run)
+go run ./cmd/task_prioritizer --demo    # seed the sample tasks when no saved state exists
+
+# or install the binary
+go install github.com/xilen0x/task_prioritizer_tui/cmd/task_prioritizer@latest
 ```
 
 | Flag | Default | Meaning |
@@ -47,8 +50,8 @@ click a free slot to create a task, click the function-key bar, scroll to move t
 
 ## Data
 
-State is saved as JSON to `$XDG_DATA_HOME/tareas/state.json`
-(default `~/.local/share/tareas/state.json`) after every change, every few seconds while the
+State is saved as JSON to `$XDG_DATA_HOME/task_prioritizer/state.json`
+(default `~/.local/share/task_prioritizer/state.json`) after every change, every few seconds while the
 pomodoro runs, and on quit. Writes are atomic (temp file + rename).
 Status values are stored in English (`todo`, `doing`, `done`; pomodoro phases `work`, `break`).
 Files written by the Spanish versions (`pendiente`, `curso`, `hecha`, `trabajo`, `descanso`)
