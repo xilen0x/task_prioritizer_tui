@@ -1,0 +1,51 @@
+#!/bin/sh
+# Opens task_prioritizer in a terminal window of 132x42 cells, the size its
+# layout targets (the app needs at least 100x30). Used by the desktop entry.
+COLS=132
+ROWS=42
+
+fail() {
+	echo "task_prioritizer-launcher: $1" >&2
+	if command -v notify-send >/dev/null 2>&1; then
+		notify-send "Task Prioritizer" "$1" 2>/dev/null
+	fi
+	exit 1
+}
+
+# Prefer the binary installed next to this script, then the one on PATH.
+app="$(dirname "$0")/task_prioritizer"
+if [ ! -x "$app" ]; then
+	app=$(command -v task_prioritizer) || fail "task_prioritizer binary not found."
+fi
+
+# Already in a terminal: run in place.
+if [ -t 0 ]; then
+	exec "$app" "$@"
+fi
+
+# try_term TERMINAL ARGS...: exec the app in that terminal if it is installed.
+try_term() {
+	term=$1
+	shift
+	command -v "$term" >/dev/null 2>&1 || return 0
+	case "${term##*/}" in
+	gnome-terminal) exec "$term" --geometry="${COLS}x${ROWS}" -- "$@" ;;
+	kitty) exec "$term" -o initial_window_width="${COLS}c" -o initial_window_height="${ROWS}c" "$@" ;;
+	alacritty) exec "$term" -o window.dimensions.columns="$COLS" -o window.dimensions.lines="$ROWS" -e "$@" ;;
+	konsole) exec "$term" -p TerminalColumns="$COLS" -p TerminalRows="$ROWS" -e "$@" ;;
+	xfce4-terminal) exec "$term" --geometry="${COLS}x${ROWS}" -x "$@" ;;
+	wezterm) exec "$term" start -- "$@" ;;
+	kgx | ptyxis) exec "$term" -- "$@" ;;
+	xterm) exec "$term" -geometry "${COLS}x${ROWS}" -e "$@" ;;
+	*) exec "$term" -e "$@" ;;
+	esac
+}
+
+if [ -n "${TERMINAL:-}" ]; then
+	try_term "$TERMINAL" "$app" "$@"
+fi
+for t in gnome-terminal kitty alacritty konsole xfce4-terminal wezterm kgx ptyxis xterm x-terminal-emulator; do
+	try_term "$t" "$app" "$@"
+done
+
+fail "no supported terminal emulator found. Set \$TERMINAL or install gnome-terminal, kitty, alacritty, konsole, xfce4-terminal or xterm."

@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Task Prioritizer
+GenericName=Task Monitor
+Comment=Focus on up to four tasks with a pomodoro timer
+Exec=task_prioritizer-launcher
+Icon=task_prioritizer
+Terminal=false
+Categories=Office;ProjectManagement;
+Keywords=tasks;todo;pomodoro;timer;focus;productivity;
