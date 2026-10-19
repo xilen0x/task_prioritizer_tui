@@ -18,12 +18,16 @@ import (
 	"github.com/xilen0x/task_prioritizer_tui/internal/tui/theme"
 )
 
+// version is set at build time with -ldflags "-X main.version=vX.Y.Z".
+var version = "dev"
+
 // options holds the parsed command-line flags.
 type options struct {
 	bar         string
 	plainDigits bool
 	demo        bool
 	noAlert     bool
+	version     bool
 }
 
 func parseFlags(args []string) (options, error) {
@@ -33,6 +37,7 @@ func parseFlags(args []string) (options, error) {
 	fs.BoolVar(&o.plainDigits, "plain-digits", false, "render big numbers as plain text")
 	fs.BoolVar(&o.demo, "demo", false, "seed the sample tasks when no saved state exists")
 	fs.BoolVar(&o.noAlert, "no-alert", false, "no bell or desktop notification when a pomodoro phase ends")
+	fs.BoolVar(&o.version, "version", false, "print the version and exit")
 	if err := fs.Parse(args); err != nil {
 		return o, err
 	}
@@ -100,6 +105,10 @@ func main() {
 			fmt.Fprintln(os.Stderr, "task_prioritizer:", err)
 		}
 		os.Exit(2)
+	}
+	if o.version {
+		fmt.Println("task_prioritizer", version)
+		return
 	}
 	if err := run(o); err != nil {
 		fmt.Fprintln(os.Stderr, "task_prioritizer:", err)

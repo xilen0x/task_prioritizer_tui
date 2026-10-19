@@ -17,6 +17,9 @@ func TestParseFlags(t *testing.T) {
 	if _, err := parseFlags([]string{"--bar=x"}); err == nil {
 		t.Fatal("want error for invalid --bar")
 	}
+	if o, err := parseFlags([]string{"--version"}); err != nil || !o.version {
+		t.Fatalf("--version: got %+v err=%v", o, err)
+	}
 }
 
 func TestInitialState(t *testing.T) {
