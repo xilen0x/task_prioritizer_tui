@@ -323,6 +323,7 @@ func (m Model) viewAbout() []string {
 		{"Pomodoro", "25 min work · 5 min break"},
 		{"Long break", "15 min every 4 pomodoros"},
 		{"Today", doneLabel},
+		{"Author", "Carlos Astorga"},
 	}, theme.OnDark3, false)...)
 	body = append(body, "", paint("Esc", theme.OnDark1, bg)+paint(" close", theme.OnDark3, bg))
 	return box(spec, body)

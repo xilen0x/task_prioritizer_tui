@@ -63,3 +63,7 @@ below 100×30 a "terminal too small" notice is shown.
 make check          # gofmt -l, go vet, go test
 make update-golden  # regenerate TUI golden files
 ```
+
+## Author
+
+Carlos Astorga
