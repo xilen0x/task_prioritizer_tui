@@ -40,7 +40,9 @@ func (n Notifier) Alert(title, body string) {
 	if err != nil {
 		return
 	}
-	_ = n.Run(path, "--app-name=task_prioritizer", title, body)
+	// The app name must not match the installed .desktop id: GNOME would
+	// then launch a new instance when the notification is clicked.
+	_ = n.Run(path, "--app-name=Task Prioritizer", "--icon=task_prioritizer", title, body)
 }
 
 func run(name string, args ...string) error {
