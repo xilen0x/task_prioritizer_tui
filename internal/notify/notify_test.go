@@ -19,7 +19,7 @@ func TestAlertRingsBellAndSendsNotification(t *testing.T) {
 	if out.String() != "\a" {
 		t.Fatalf("bell = %q", out.String())
 	}
-	want := []string{"/usr/bin/notify-send", "--app-name=task_prioritizer", "Pomodoro done", "Take a 5 min break."}
+	want := []string{"/usr/bin/notify-send", "--app-name=Task Prioritizer", "--icon=task_prioritizer", "Pomodoro done", "Take a 5 min break."}
 	if !reflect.DeepEqual(ran, want) {
 		t.Fatalf("ran %v, want %v", ran, want)
 	}
