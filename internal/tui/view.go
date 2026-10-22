@@ -165,7 +165,7 @@ func (m Model) viewFocus(w, focusH int) []string {
 	lines = append(lines, m.viewCounters(f, color, inner)...)
 	lines = append(lines, blank(inner, bg))
 	fill, empty := theme.Bar(m.bar, f.Progress, min(focusBarW, inner-18))
-	lines = append(lines, paint(fill, color, bg)+paint(empty, theme.Ink2, bg)+blank(2, bg)+paint("+/− adjusts 10%", theme.OnDark3, bg))
+	lines = append(lines, paint(fill, color, bg)+paint(empty, theme.Ink2, bg)+blank(2, bg)+paint("+/− adjusts 5%", theme.OnDark3, bg))
 	for len(lines) < body {
 		lines = append(lines, "")
 	}

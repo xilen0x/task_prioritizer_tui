@@ -133,7 +133,7 @@ func TestMainKeys(t *testing.T) {
 			}
 		}},
 		{"plus, equals and minus bump progress", []string{"+", "=", "-"}, func(t *testing.T, m Model) {
-			if got := m.board.Get(1).Progress; got != 80 {
+			if got := m.board.Get(1).Progress; got != 75 {
 				t.Fatalf("progress = %d", got)
 			}
 		}},
