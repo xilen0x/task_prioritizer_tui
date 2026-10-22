@@ -120,3 +120,53 @@ func TestMouse(t *testing.T) {
 		}
 	})
 }
+
+func TestTodayClockShowsFocusedTaskTimeForToday(t *testing.T) {
+	tests := []struct {
+		name string
+		w, h int
+	}{
+		{"compact", 100, 30},
+		{"design", 132, 44},
+		{"large", 150, 50},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			m := newDemo(nil)
+			m.board.Tasks[0].Today, m.board.Tasks[0].TodayDate = 3723, "2026-10-18"
+			m = resize(m, tt.w, tt.h)
+			requireScreen(t, m, tt.w, tt.h)
+			v := m.View()
+			if !strings.Contains(v, "TODAY") || !strings.Contains(v, "01:02:03") {
+				t.Fatalf("TODAY clock with 01:02:03 missing:\n%s", v)
+			}
+		})
+	}
+}
+
+func TestTodayClockIgnoresStaleDate(t *testing.T) {
+	m := newDemo(nil)
+	m.board.Tasks[0].Today, m.board.Tasks[0].TodayDate = 3723, "2026-10-17"
+	m = resize(m, 150, 50)
+	if v := m.View(); strings.Contains(v, "01:02:03") || !strings.Contains(v, "00:00:00") {
+		t.Fatalf("stale daily counter must show as zero:\n%s", v)
+	}
+}
+
+func TestTodayClockFallsBackWhenNarrow(t *testing.T) {
+	m := newDemo(nil)
+	m.board.Tasks[0].Today, m.board.Tasks[0].TodayDate = 3723, "2026-10-18"
+	m = resize(m, 150, 50)
+	f, _ := m.board.Focused()
+	const w = 60 // too narrow for the big TODAY digits beside the pomodoro
+	lines := m.viewCounters(f, "#ffffff", w)
+	joined := strings.Join(lines, "\n")
+	if !strings.Contains(joined, "TODAY 01:02:03") {
+		t.Fatalf("narrow fallback missing:\n%s", joined)
+	}
+	for _, l := range lines {
+		if lenW(l) > w {
+			t.Fatalf("line overflows %d: %q", w, l)
+		}
+	}
+}
