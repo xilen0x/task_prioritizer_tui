@@ -148,7 +148,7 @@ func (m *Model) onTick() (ended pomodoro.Phase) {
 	var worked bool
 	m.pomo, worked = m.pomo.Tick()
 	if worked {
-		m.board.TrackElapsed(1)
+		m.board.TrackElapsed(1, m.now.Format(tasks.DateLayout))
 	}
 	m.ticksSinceSave++
 	if m.pomo.Phase != prev || m.ticksSinceSave >= saveEvery {

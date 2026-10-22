@@ -185,6 +185,9 @@ func TestTickAdvancesPomodoroAndFocusTime(t *testing.T) {
 	if m.pomo.Left != 1062 || m.board.Get(1).Elapsed != 5048 {
 		t.Fatalf("left=%d elapsed=%d", m.pomo.Left, m.board.Get(1).Elapsed)
 	}
+	if got := m.board.Get(1); got.Today != 1 || got.TodayDate != "2026-10-18" {
+		t.Fatalf("today=%d date=%q, want 1 on the clock's date", got.Today, got.TodayDate)
+	}
 	m = press(m, "p")
 	next, _ = m.Update(tickMsg{})
 	m = next.(Model)

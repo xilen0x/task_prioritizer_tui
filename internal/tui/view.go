@@ -196,17 +196,47 @@ func (m Model) viewCounters(f tasks.Task, color string, w int) []string {
 		left = append([]string{""}, left...)
 	}
 
-	rw := 0
-	for _, r := range right {
-		rw = max(rw, lenW(r))
-	}
 	sep := paint("│", theme.OnDarkBorder, bg) + blank(3, bg)
+	today := f.TodaySeconds(m.now.Format(tasks.DateLayout))
+	clock := m.todayClock(today)
+	leftW := maxW(left)
+	if leftW+2*lenW(sep)+maxW(right)+3+maxW(clock) <= w {
+		// Side by side: PROGRESS │ POMODORO │ TODAY.
+		pw := maxW(right)
+		for i := range right {
+			right[i] = fit(right[i], pw, bg) + blank(3, bg) + sep + clock[i]
+		}
+	} else if fallback := paint("TODAY ", theme.OnDark3, bg) + bold(theme.HMS(today), theme.OnDark1, bg); left[0] == "" &&
+		lenW(fallback) <= w-maxW(right)-lenW(sep) {
+		// Too narrow for the TODAY column: use the free top line of PROGRESS.
+		left[0] = fallback
+	}
+
+	rw := maxW(right)
 	rightW := rw + lenW(sep)
 	out := make([]string, len(right))
 	for i := range right {
 		out[i] = fit(left[i], w-rightW, bg) + sep + fit(right[i], rw, bg)
 	}
 	return out
+}
+
+// todayClock is the TODAY column: the focused task's time tracked today as
+// a big h:mm with the exact hh:mm:ss below, as tall as the pomodoro column.
+func (m Model) todayClock(seconds int) []string {
+	bg := theme.Ink1
+	out := []string{paint("TODAY", theme.OnDark3, bg)}
+	out = append(out, m.digits(theme.TotalLabel(seconds), theme.Accent)...)
+	return append(out, paint(theme.HMS(seconds)+" worked", theme.OnDark3, bg))
+}
+
+// maxW is the widest display width among lines.
+func maxW(lines []string) int {
+	w := 0
+	for _, l := range lines {
+		w = max(w, lenW(l))
+	}
+	return w
 }
 
 func (m Model) viewRow(t tasks.Task, w, h int) []string {

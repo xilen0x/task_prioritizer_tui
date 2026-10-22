@@ -83,6 +83,33 @@ func TestLoadRepairsInconsistentState(t *testing.T) {
 	}
 }
 
+func TestLoadTodayCounter(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "state.json")
+	raw := `{"version":1,"board":{"tasks":[
+		{"id":1,"title":"legacy","status":"doing","prio":2,"progress":10,"est":1,"elapsed":60},
+		{"id":2,"title":"neg","status":"doing","prio":2,"progress":10,"est":1,"elapsed":60,"today":-5,"todayDate":"2026-10-22"},
+		{"id":3,"title":"ok","status":"doing","prio":2,"progress":10,"est":1,"elapsed":60,"today":30,"todayDate":"2026-10-22"}],
+		"focusId":1,"selId":1,"nextId":4},
+		"pomo":{"phase":"work","left":1500,"running":false,"done":0}}`
+	if err := os.WriteFile(path, []byte(raw), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	st, _, err := New(path).Load()
+	if err != nil {
+		t.Fatal(err)
+	}
+	ts := st.Board.Tasks
+	if ts[0].Today != 0 || ts[0].TodayDate != "" {
+		t.Fatalf("legacy task today = %d %q, want 0 \"\"", ts[0].Today, ts[0].TodayDate)
+	}
+	if ts[1].Today != 0 {
+		t.Fatalf("negative today not repaired: %d", ts[1].Today)
+	}
+	if ts[2].Today != 30 || ts[2].TodayDate != "2026-10-22" {
+		t.Fatalf("today counter not loaded: %+v", ts[2])
+	}
+}
+
 func TestDefaultPath(t *testing.T) {
 	t.Run("uses XDG_DATA_HOME", func(t *testing.T) {
 		t.Setenv("XDG_DATA_HOME", "/x/data")

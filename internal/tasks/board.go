@@ -179,12 +179,21 @@ func (b *Board) Delete(id int) {
 	b.SelID = b.FocusID
 }
 
-// TrackElapsed adds seconds to the focused task when it is in progress. The
-// caller decides whether the pomodoro is in a running work block.
-func (b *Board) TrackElapsed(seconds int) {
-	if i := b.index(b.FocusID); i >= 0 && b.Tasks[i].Status == Doing {
-		b.Tasks[i].Elapsed += seconds
+// TrackElapsed adds seconds to the focused task when it is in progress,
+// both to its all-time Elapsed and to its daily counter for date (a local
+// "2006-01-02" date). A new date restarts the daily counter. The caller
+// decides whether the pomodoro is in a running work block.
+func (b *Board) TrackElapsed(seconds int, date string) {
+	i := b.index(b.FocusID)
+	if i < 0 || b.Tasks[i].Status != Doing {
+		return
 	}
+	t := &b.Tasks[i]
+	t.Elapsed += seconds
+	if t.TodayDate != date {
+		t.Today, t.TodayDate = 0, date
+	}
+	t.Today += seconds
 }
 
 // Stats summarises the board.
