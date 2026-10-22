@@ -252,14 +252,32 @@ func TestSetFocusAndNum(t *testing.T) {
 
 func TestTrackElapsed(t *testing.T) {
 	b := Demo()
-	b.TrackElapsed(1)
+	b.TrackElapsed(1, "2026-10-22")
 	if b.Get(1).Elapsed != 5048 {
 		t.Fatalf("focused doing task elapsed = %d", b.Get(1).Elapsed)
 	}
 	b.FocusID = 3 // todo
-	b.TrackElapsed(1)
-	if b.Get(3).Elapsed != 0 {
+	b.TrackElapsed(1, "2026-10-22")
+	if b.Get(3).Elapsed != 0 || b.Get(3).Today != 0 {
 		t.Fatal("todo focus must not accrue time")
+	}
+}
+
+func TestTrackElapsedToday(t *testing.T) {
+	b := Demo()
+	b.TrackElapsed(1, "2026-10-22")
+	b.TrackElapsed(1, "2026-10-22")
+	got := b.Get(1)
+	if got.Today != 2 || got.TodayDate != "2026-10-22" {
+		t.Fatalf("today = %d on %q, want 2 on 2026-10-22", got.Today, got.TodayDate)
+	}
+	b.TrackElapsed(1, "2026-10-23")
+	got = b.Get(1)
+	if got.Today != 1 || got.TodayDate != "2026-10-23" {
+		t.Fatalf("after rollover today = %d on %q, want 1 on 2026-10-23", got.Today, got.TodayDate)
+	}
+	if got.Elapsed != 5047+3 {
+		t.Fatalf("rollover must keep elapsed, got %d", got.Elapsed)
 	}
 }
 

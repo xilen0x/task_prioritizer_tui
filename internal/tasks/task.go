@@ -41,16 +41,31 @@ const (
 	UntitledName = "Untitled task"
 )
 
+// DateLayout is the local calendar date format used for TodayDate.
+const DateLayout = "2006-01-02"
+
 // Task is one item on the board. Progress is 0..100, Est is in hours and
-// Elapsed is tracked time in seconds.
+// Elapsed is tracked time in seconds. Today is the time tracked on the
+// local date TodayDate, in seconds.
 type Task struct {
-	ID       int     `json:"id"`
-	Title    string  `json:"title"`
-	Status   Status  `json:"status"`
-	Prio     int     `json:"prio"`
-	Progress int     `json:"progress"`
-	Est      float64 `json:"est"`
-	Elapsed  int     `json:"elapsed"`
+	ID        int     `json:"id"`
+	Title     string  `json:"title"`
+	Status    Status  `json:"status"`
+	Prio      int     `json:"prio"`
+	Progress  int     `json:"progress"`
+	Est       float64 `json:"est"`
+	Elapsed   int     `json:"elapsed"`
+	Today     int     `json:"today,omitempty"`
+	TodayDate string  `json:"todayDate,omitempty"`
+}
+
+// TodaySeconds returns the time tracked on date, or 0 when the daily
+// counter belongs to another day.
+func (t Task) TodaySeconds(date string) int {
+	if t.TodayDate != date {
+		return 0
+	}
+	return t.Today
 }
 
 // NewDraft returns the defaults for a task created from the editor.

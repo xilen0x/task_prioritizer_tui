@@ -158,6 +158,7 @@ func repair(st State) State {
 		t.Progress = clamp(t.Progress, 0, 100)
 		t.Est = max(tasks.EstMin, min(tasks.EstMax, t.Est))
 		t.Elapsed = max(0, t.Elapsed)
+		t.Today = max(0, t.Today)
 		maxID = max(maxID, t.ID)
 	}
 	b.NextID = max(b.NextID, maxID+1)
