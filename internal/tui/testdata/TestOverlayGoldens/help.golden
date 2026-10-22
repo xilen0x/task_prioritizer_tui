@@ -18,7 +18,7 @@
  ╰────────────────────────────────────│  n  F2           New task (max 4)                    │────╯  │                            │ 
                                       │  e  F3           Edit the selected task              │       │   1      2      3      4   │ 
  ╭────────────────────────────────────│  space  F4       To do → in progress → done          │────╮  │  70%    40%    0%    100%  │ 
- │                                    │  +  −            Progress ±10%                       │    │  ╰────────────────────────────╯ 
+ │                                    │  +  −            Progress ±5%                        │    │  ╰────────────────────────────╯ 
  │  2   Review the backups module PR  │  x  F8           Delete (y confirms)                 │0%  │                                 
  │      IN PROGRESS · P2 medium · 00:3│  p  F6           Pause or resume the pomodoro        │    │  ╭─ SUMMARY ──────────────────╮ 
  │                                    │  r               Reset the pomodoro                  │    │  │                            │ 

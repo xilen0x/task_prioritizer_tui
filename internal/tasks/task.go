@@ -32,7 +32,7 @@ func (s Status) index() int {
 // Limits and defaults of the domain.
 const (
 	MaxTasks     = 4
-	ProgressStep = 10
+	ProgressStep = 5
 	EstStep      = 0.5
 	EstMin       = 0.5
 	EstMax       = 40
@@ -140,7 +140,7 @@ func (t Task) PrioStepped(d int) Task {
 	return t
 }
 
-// ProgressStepped moves progress by d steps of 10% as the editor does:
+// ProgressStepped moves progress by d steps of 5% as the editor does:
 // 100% is done and lowering a done task returns it to doing.
 func (t Task) ProgressStepped(d int) Task {
 	p := clamp(t.Progress+d*ProgressStep, 0, 100)

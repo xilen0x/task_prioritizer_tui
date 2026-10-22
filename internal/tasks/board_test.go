@@ -139,14 +139,14 @@ func TestDraftSteps(t *testing.T) {
 	})
 	t.Run("progress step does not promote todo", func(t *testing.T) {
 		d := Task{Status: Todo}.ProgressStepped(1)
-		if d.Status != Todo || d.Progress != 10 {
+		if d.Status != Todo || d.Progress != 5 {
 			t.Fatalf("got %s/%d", d.Status, d.Progress)
 		}
 		d = Task{Status: Done, Progress: 100}.ProgressStepped(-1)
-		if d.Status != Doing || d.Progress != 90 {
+		if d.Status != Doing || d.Progress != 95 {
 			t.Fatalf("got %s/%d", d.Status, d.Progress)
 		}
-		d = Task{Status: Doing, Progress: 90}.ProgressStepped(1)
+		d = Task{Status: Doing, Progress: 95}.ProgressStepped(1)
 		if d.Status != Done {
 			t.Fatalf("got %s", d.Status)
 		}

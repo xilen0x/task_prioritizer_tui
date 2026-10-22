@@ -94,7 +94,7 @@ use `q`, or turn off "Enable the menu accelerator key" in its preferences.
 | `n` / `F2` | New task (at most 4) |
 | `e` / `F3` | Edit the selected task |
 | `Space` / `F4` | Cycle status: to do → in progress → done |
-| `+` `=` / `-` | Progress ±10% |
+| `+` `=` / `-` | Progress ±5% |
 | `x` / `Del` / `F8` | Delete (confirm with `y`/`Enter`, cancel with `n`/`Esc`) |
 | `p` / `F6` | Pause or resume the pomodoro |
 | `r` | Reset the pomodoro |

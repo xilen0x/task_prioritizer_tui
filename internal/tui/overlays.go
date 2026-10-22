@@ -340,7 +340,7 @@ func viewHelp() []string {
 		{"n  F2", "New task (max 4)"},
 		{"e  F3", "Edit the selected task"},
 		{"space  F4", "To do → in progress → done"},
-		{"+  −", "Progress ±10%"},
+		{"+  −", "Progress ±5%"},
 		{"x  F8", "Delete (y confirms)"},
 		{"p  F6", "Pause or resume the pomodoro"},
 		{"r", "Reset the pomodoro"},
